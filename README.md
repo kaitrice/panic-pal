@@ -1,4 +1,4 @@
-# Panic Pal
+# Panic Attack Resolver
 
 ## Authors
 
@@ -14,9 +14,12 @@ Innovative mobile application designed to provide immediate support during momen
 ## Key Features
 
 - **Instant Support:** Chat with the Generative AI to receive guidance and assistance when experiencing a panic attack.
+
+<!--
 - **Adaptability:** Our AI is not static; it can evolve and expand its capabilities over time. This includes training it to handle new situations effectively.
 - **Connect with Loved Ones:** The app can be configured to reach out to trusted contacts or loved ones in the event of an emergency, ensuring that help is always within reach.
 - **Personalization:** After assisting users in calming and grounding techniques, the chatbot seeks feedback to continually refine its responses and tailor its support for maximum benefit to each individual.
+-->
 
 ## Installation
 
@@ -62,12 +65,15 @@ This will load your React Native app on your mobile device.
 
 ## Technologies Used
 
-- React Native
-- Llama 2
+- **Frontend Framework** [React Native](https://reactnative.dev/)
+- **Large Language Model** [Llama 2](https://ai.meta.com/llama/)
+- **Development Environment** [Expo Go](https://expo.dev/)
+<!--
 - Redux for state management
 - Firebase for authentication and backend services
 - React Navigation for navigation
 - Axios for making API requests
+-->
 
 ## Screenshots
 
@@ -78,10 +84,6 @@ This will load your React Native app on your mobile device.
 - Make your changes and commit them (`git commit -m 'Add feature'`)
 - Push your changes to your fork (`git push origin feature/your-feature`)
 - Create a pull request to the main repository
-
-## Acknowledgments
-
-We would like to express our gratitude to our team members for their dedicated efforts in making this project a success. Each member played a crucial role in their respective areas, contributing to the overall success of the application.
 
 ## License
 
