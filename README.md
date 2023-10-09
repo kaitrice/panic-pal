@@ -2,10 +2,10 @@
 
 ## Authors
 
-- **Indi Cowan** (Undergraduate): Machine Learning Engineer
+- **Indi Cowan** (Undergraduate): 
 - **Fatima Preciado** (Undergraduate):
-- **Kaitlyn Rice** (Undergraduate): Frontend Developer
-- **Daniel Koronthaly** (Graduate): Machine Learning Engineer
+- **Kaitlyn Rice** (Undergraduate): 
+- **Daniel Koronthaly** (Graduate): 
 
 ## Description
 
