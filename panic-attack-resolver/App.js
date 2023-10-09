@@ -1,11 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import Panic_Attack_Resolver from './src';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Panic Attack Resolver</Text>
-      <StatusBar style="auto" />
+      <Panic_Attack_Resolver />
     </View>
   );
 }
@@ -13,8 +12,5 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
