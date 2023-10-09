@@ -42,20 +42,16 @@ npm install
     - Install the Expo Go app from the [App Store (iOS)](https://apps.apple.com/us/app/expo-go/id982107779) or [Google Play Store (Android)](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en&gl=US) on your mobile device.
 2. **Start the Development Server:**
     - To run the app with Expo Go, execute the following command on your local machine:
-        
-        ```bash
+
+    ```bash
         npx expo start
-        ```
-        
+    ```
+
 3. **Scan the QR Code:**
-    
     **************Android**************
-    
     - Open the Expo Go app on your mobile device.
     - Use the app to scan the QR code displayed in your terminal when you ran `npx expo start`.
-    
     ******iOS******
-    
     - Open the Camera app on your iPhone.
     - Use your camera to scan the QR code displayed in your terminal when you ran `npx expo start`.
 
