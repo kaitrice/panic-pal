@@ -1,10 +1,10 @@
-import React from 'react';
+import React from 'react'
 import {
     StyleSheet,
     View,
     Text,
     TouchableOpacity,
-} from 'react-native';
+} from 'react-native'
 
 const CustomButton = ({ title, onPress, disabled, circle, color }) => (
     <TouchableOpacity
@@ -18,17 +18,17 @@ const CustomButton = ({ title, onPress, disabled, circle, color }) => (
     >
         <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
-);
+)
 
-const Footer = () => (
+const Footer = ({ setCurrentScreen }) => (
     <View style={styles.container}>
-        <CustomButton title="Home" onPress={() => {}} color="#007AFF" />
-        <CustomButton title="Breathing" onPress={() => {}} disabled color="#BFBFBF" />
-        <CustomButton title="SOS" onPress={() => {}} circle color="#FF0000" />
-        <CustomButton title="Calendar" onPress={() => {}} disabled color="#BFBFBF" />
-        <CustomButton title="More" onPress={() => {}} color="#007AFF" />
+        <CustomButton title="Home" onPress={() => setCurrentScreen('Chat')} color="#007AFF" />
+        <CustomButton title="Breathing" onPress={() => setCurrentScreen('Breathing')} color="#007AFF" />
+        <CustomButton title="SOS" onPress={() => setCurrentScreen('SOS')} circle color="#FF0000" />
+        <CustomButton title="Calendar" onPress={() => setCurrentScreen('Calendar')} color="#007AFF" />
+        <CustomButton title="More" onPress={() => setCurrentScreen('Settings')} color="#007AFF" />
     </View>
-);
+)
 
 const styles = StyleSheet.create({
     container: {
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
     },
-});
+})
 
-export default Footer;
+export default Footer

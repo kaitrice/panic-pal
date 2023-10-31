@@ -3,10 +3,10 @@ import {
     View,
 } from 'react-native'
 
-const Chat = () => (
+const Calendar = () => (
     <View>
-        <Text>Chat</Text>
+        <Text>Calendar</Text>
     </View>
 )
 
-export default Chat
+export default Calendar

@@ -3,10 +3,10 @@ import {
     View,
 } from 'react-native'
 
-const Chat = () => (
+const SOS = () => (
     <View>
-        <Text>Chat</Text>
+        <Text>SOS</Text>
     </View>
 )
 
-export default Chat
+export default SOS

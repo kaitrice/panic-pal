@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import {
   StyleSheet,
@@ -7,14 +7,44 @@ import {
 import Header from './components/Header'
 import Footer from './components/Footer'
 
-const App = () => (
+// Importing individual screen components
+import Chat from './components/Chat'
+import Settings from './components/Settings'
+import SOS from './components/SOS'
+import Breathing from './components/Breathing'
+import Calendar from './components/Calendar'
+
+const App = () => {
+  const [currentScreen, setCurrentScreen] = useState('Chat');
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'Chat':
+        return <Chat />
+      case 'Breathing':
+        return <Breathing />
+      case 'SOS':
+        return <SOS />
+      case 'Calendar':
+        return <Calendar />
+      case 'Settings':
+        return <Settings />
+      default:
+        return <Chat />
+    }
+  };
+
+  return (
     <View style={styles.container}>
       <Header style={styles.top} />
-      <View style={styles.middle} />
-      <Footer style={styles.bottom} />
+      <View style={styles.middle}>
+        {renderScreen()}
+      </View>
+      <Footer style={styles.bottom} setCurrentScreen={setCurrentScreen} />
       <StatusBar style="auto" />
     </View>
-)
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
