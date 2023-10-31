@@ -8,11 +8,11 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 
 // Importing individual screen components
-import Chat from './components/Chat'
-import Settings from './components/Settings'
-import SOS from './components/SOS'
-import Breathing from './components/Breathing'
-import Calendar from './components/Calendar'
+import Chat from './components/screens/Chat'
+import Settings from './components/screens/Settings'
+import SOS from './components/screens/SOS'
+import Breathing from './components/screens/Breathing'
+import Calendar from './components/screens/Calendar'
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('Chat');

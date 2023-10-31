@@ -1,6 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Image, View } from 'react-native'
+import { 
+    Image, 
+    View } 
+from 'react-native'
 
 // Import the three sloth image variants
 import Sloth1 from '../assets/sloths/sloth-close_eyes.png';
