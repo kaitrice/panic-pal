@@ -4,23 +4,23 @@ import {
     StyleSheet,
     Text,
     View,
-  } from 'react-native'
-  
+} from 'react-native'
+
 const Header = () => (
     <View style={styles.header}>
         <Sloth variant="variant1"></Sloth>
         <Text style={styles.title}>Panic Pal</Text>
-        <Text style={styles.subtitle}>Panic Attack Resolver</Text>
+        {/* <Text style={styles.subtitle}>Panic Attack Resolver</Text> */}
     </View>
 )
 
 const styles = StyleSheet.create({
     header: {
-        backgroundColor: '#fff',
+        backgroundColor: 'white',
         width: '100%',
-        padding: 10,
+        paddingTop: 10,
+        paddingBottom: 20,
         alignItems: 'center',
-        justifyContent: 'center',
     },
     title: {
         color: '#80B9E2',
