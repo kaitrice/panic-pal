@@ -1,20 +1,67 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react'
+import { StatusBar } from 'expo-status-bar'
+import {
+  StyleSheet,
+  View,
+} from 'react-native'
+import Header from './components/Header'
+import Footer from './components/Footer'
 
-export default function App() {
+// Importing individual screen components
+import Chat from './components/Chat'
+import Settings from './components/Settings'
+import SOS from './components/SOS'
+import Breathing from './components/Breathing'
+import Calendar from './components/Calendar'
+
+const App = () => {
+  const [currentScreen, setCurrentScreen] = useState('Chat');
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'Chat':
+        return <Chat />
+      case 'Breathing':
+        return <Breathing />
+      case 'SOS':
+        return <SOS />
+      case 'Calendar':
+        return <Calendar />
+      case 'Settings':
+        return <Settings />
+      default:
+        return <Chat />
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={{ color: '#fff' }}>Panic Pal</Text>
+      <Header style={styles.top} />
+      <View style={styles.middle}>
+        {renderScreen()}
+      </View>
+      <Footer style={styles.bottom} setCurrentScreen={setCurrentScreen} />
       <StatusBar style="auto" />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#13de9b',
+    backgroundColor: '#F2F2F1',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
-});
+  top: {
+    flex: 1,
+  },
+  middle: {
+    flex: 6,
+  },
+  bottom: {
+    flex: 1,
+  },
+})
+
+export default App
