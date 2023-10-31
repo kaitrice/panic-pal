@@ -64,9 +64,9 @@ This will load your React Native app on your mobile device.
 ## Technologies Used
 
 - **Frontend Framework** [React Native](https://reactnative.dev/)
-<!-- - **Backend Framework** [Node.js](https://nodejs.dev/) TBD -->
-- **Large Language Model** [Llama 2](https://ai.meta.com/llama/)
+- **Backend Framework** [Node.js](https://nodejs.dev/)
 - **Development Environment** [Expo Go](https://expo.dev/)
+- **Large Language Model** [Llama 2](https://ai.meta.com/llama/)
 <!--
 - Redux for state management
 - Firebase for authentication and backend services
@@ -86,53 +86,53 @@ This will load your React Native app on your mobile device.
 
 ## Development Plan
 
-### Week 5
+### Week 1 - 5
 
-**Goal:** Setup welcome screen and basic app navigation
+**Goal:** Research methodologies
 
-**Assignment:** Homework 3 - Final group prototype
+**Assignment:**
 
 ### Week 6
 
-**Goal:** Setup chatbot screen
+**Goal:** Setup basic app stucture and navigation
 
 **Assignment:**
 
 ### Week 7
 
-**Goal:** Setup chatbot screen
+**Goal:** Setup chatbot and settings screen
 
-**Assignment:** Implementation Checkpoint 1
+**Assignment:** Implementation Checkpoint 1 (25%)
 
 ### Week 8
 
-**Goal:** Setup settings screen
+**Goal:** Setup chat interaction
 
-**Assignment:** Homework 4 -
+**Assignment:** Homework 4 - Individual, Implementation Checkpoint 2 (50%)
 
 ### Week 9
 
-**Goal:** Setup settings screen
+**Goal:** Setup settings interaction
 
-**Assignment:** Implementation Checkpoint 2
+**Assignment:** 
 
 ### Week 10
 
-**Goal:** Connect with LLM (maybe start with this to be sure correct exchange?)
+**Goal:** Complete LLM integration
 
-**Assignment:** Implementation Checkpoint 3
+**Assignment:** Implementation Checkpoint 3 (75%)
 
 ### Week 11
 
-**Goal:** Fix any 🪲 buggy behavior
+**Goal:** Fix any 🪲 buggy behavior (add functionality)
 
 **Assignment:** Project Website & Video
 
 ### Week 12
 
-**Goal:**
+**Goal:** Fix any 🪲 buggy behavior (add functionality)
 
-**Assignment:** Implementation Checkpoint 4
+**Assignment:** Implementation Checkpoint 4 (100%)
 
 ## License
 
