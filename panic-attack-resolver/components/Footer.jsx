@@ -22,11 +22,11 @@ const CustomButton = ({ title, onPress, disabled, circle, color }) => (
 
 const Footer = ({ setCurrentScreen }) => (
     <View style={styles.container}>
-        <CustomButton title="Home" onPress={() => setCurrentScreen('Chat')} color="#007AFF" />
-        <CustomButton title="Breathing" onPress={() => setCurrentScreen('Breathing')} color="#007AFF" />
+        <CustomButton title="Home" onPress={() => setCurrentScreen('Chat')} color="#80B9E2" />
+        <CustomButton title="Breathing" onPress={() => setCurrentScreen('Breathing')} color="#80B9E2" />
         <CustomButton title="SOS" onPress={() => setCurrentScreen('SOS')} circle color="#FF0000" />
-        <CustomButton title="Calendar" onPress={() => setCurrentScreen('Calendar')} color="#007AFF" />
-        <CustomButton title="More" onPress={() => setCurrentScreen('Settings')} color="#007AFF" />
+        <CustomButton title="Calendar" onPress={() => setCurrentScreen('Calendar')} color="#80B9E2" />
+        <CustomButton title="More" onPress={() => setCurrentScreen('Settings')} color="#80B9E2" />
     </View>
 )
 
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: 'white',
+        // backgroundColor: 'white',
         justifyContent: 'center',
         padding: 10,
     },
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
         margin: 2,
     },
     squoval: {
+        borderColor: '#332F2E',
         width: 70,
         height: 70,
         borderRadius: 20,
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: 'white',
+        color: '#F2F2F1',
     },
 })
 

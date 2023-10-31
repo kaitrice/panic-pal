@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   middle: {
-    flex: 6,
+    flex: 7,
   },
   bottom: {
     flex: 1,
