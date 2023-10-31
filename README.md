@@ -2,14 +2,16 @@
 
 ## Authors
 
-- **Indi Cowan** (Undergraduate): 
-- **Fatima Preciado** (Undergraduate):
-- **Kaitlyn Rice** (Undergraduate): 
-- **Daniel Koronthaly** (Graduate): 
+- **Indi Cowan** (Undergraduate)
+- **Fatima Preciado** (Undergraduate)
+- **Kaitlyn Rice** (Undergraduate)
+- **Daniel Koronthaly** (Graduate)
 
 ## Description
 
 Innovative mobile application designed to provide immediate support during moments of panic and anxiety. Our app enables users to engage in text-based conversations with a Generative AI, leveraging advanced language models such as Llama.
+
+### Timeline: September 27 - December 15, 2023
 
 ## Key Features
 
@@ -48,12 +50,12 @@ npm install
     ```
 
 3. **Scan the QR Code:**
-    **************Android**************
-    - Open the Expo Go app on your mobile device.
-    - Use the app to scan the QR code displayed in your terminal when you ran `npx expo start`.
-    ******iOS******
-    - Open the Camera app on your iPhone.
-    - Use your camera to scan the QR code displayed in your terminal when you ran `npx expo start`.
+   1. **Android**
+       - Open the Expo Go app on your mobile device.
+       - Use the app to scan the QR code displayed in your terminal when you ran `npx expo start`.
+   2. **iOS**
+       - Open the Camera app on your iPhone.
+       - Use your camera to scan the QR code displayed in your terminal when you ran `npx expo start`.
 
 This will load your React Native app on your mobile device.
 
@@ -62,6 +64,7 @@ This will load your React Native app on your mobile device.
 ## Technologies Used
 
 - **Frontend Framework** [React Native](https://reactnative.dev/)
+<!-- - **Backend Framework** [Node.js](https://nodejs.dev/) TBD -->
 - **Large Language Model** [Llama 2](https://ai.meta.com/llama/)
 - **Development Environment** [Expo Go](https://expo.dev/)
 <!--
@@ -80,6 +83,56 @@ This will load your React Native app on your mobile device.
 - Make your changes and commit them (`git commit -m 'Add feature'`)
 - Push your changes to your fork (`git push origin feature/your-feature`)
 - Create a pull request to the main repository
+
+## Development Plan
+
+### Week 5
+
+**Goal:** Setup welcome screen and basic app navigation
+
+**Assignment:** Homework 3 - Final group prototype
+
+### Week 6
+
+**Goal:** Setup chatbot screen
+
+**Assignment:**
+
+### Week 7
+
+**Goal:** Setup chatbot screen
+
+**Assignment:** Implementation Checkpoint 1
+
+### Week 8
+
+**Goal:** Setup settings screen
+
+**Assignment:** Homework 4 -
+
+### Week 9
+
+**Goal:** Setup settings screen
+
+**Assignment:** Implementation Checkpoint 2
+
+### Week 10
+
+**Goal:** Connect with LLM (maybe start with this to be sure correct exchange?)
+
+**Assignment:** Implementation Checkpoint 3
+
+### Week 11
+
+**Goal:** Fix any 🪲 buggy behavior
+
+**Assignment:** Project Website & Video
+
+### Week 12
+
+**Goal:**
+
+**Assignment:** Implementation Checkpoint 4
 
 ## License
 
