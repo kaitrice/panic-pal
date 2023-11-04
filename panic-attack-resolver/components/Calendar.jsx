@@ -1,14 +1,8 @@
 import React, {useState, useRef} from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  View,
-  TouchableWithoutFeedback,
-  Text,
-  Dimensions,
-} from 'react-native';
+import {StyleSheet, SafeAreaView, View, ScrollView, TouchableWithoutFeedback, Text, Dimensions} from 'react-native';
 import moment from 'moment';
 import Swiper from 'react-native-swiper';
+import JournalEntry from "./JournalEntry";
 
 const windowWidth = Dimensions.get ('window').width;
 
@@ -17,23 +11,21 @@ const Calendar = () => {
   const [value, setValue] = useState (new Date ());
   const [week, setWeek] = useState (0);
 
-  const weeks = React.useMemo (
-    () => {
-      const start = moment ().add (week, 'weeks').startOf ('week');
+  // Generate the weeks array based on the current week
+  const weeks = React.useMemo ( () => {
+    const start = moment ().add (week, 'weeks').startOf ('week');
+    
+    return [-1, 0, 1].map (adj => {
+      return Array.from ({length: 7}).map ((_, index) => {
+        const date = moment (start).add (adj, 'week').add (index, 'day');
 
-      return [-1, 0, 1].map (adj => {
-        return Array.from ({length: 7}).map ((_, index) => {
-          const date = moment (start).add (adj, 'week').add (index, 'day');
-
-          return {
-            weekday: date.format ('ddd'),
-            date: date.toDate (),
-          };
-        });
+        return {
+          weekday: date.format ('ddd'),
+          date: date.toDate (),
+        };
       });
-    },
-    [week]
-  );
+    });
+  }, [week]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -60,33 +52,14 @@ const Calendar = () => {
             {weeks.map ((dates, index) => (
               <View style={[styles.itemRow]} key={index}>
                 {dates.map ((item, dateIndex) => {
-                  const isActive =
-                    value.toDateString () === item.date.toDateString ();
+                  const isActive = value.toDateString () === item.date.toDateString ();
                   return (
-                    <TouchableWithoutFeedback
-                      key={dateIndex}
-                      onPress={() => setValue (item.date)}
-                    >
-                      <View
-                        style={[
-                          styles.item,
-                          isActive && {
-                            backgroundColor: '#80B9E2',
-                            borderColor: '#80B9E2',
-                          },
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.itemWeekday,
-                            isActive && {color: '#fff'},
-                          ]}
-                        >
+                    <TouchableWithoutFeedback key={dateIndex} onPress={() => setValue (item.date)}>
+                      <View style={[styles.item, isActive && {backgroundColor: '#80B9E2', borderColor: '#80B9E2'}]}>
+                        <Text style={[styles.itemWeekday, isActive && {color: '#fff'}]}>
                           {item.weekday}
                         </Text>
-                        <Text
-                          style={[styles.itemDate, isActive && {color: '#fff'}]}
-                        >
+                        <Text style={[styles.itemDate, isActive && {color: '#fff'}]}>
                           {item.date.getDate ()}
                         </Text>
                       </View>
@@ -97,11 +70,10 @@ const Calendar = () => {
             ))}
           </Swiper>
         </View>
-
         <View style={{flex: 1, paddingHorizontal: 10}}>
-          <View>
-            <Text> journal here !!!</Text>
-          </View>
+        <ScrollView>
+          <JournalEntry/>
+        </ScrollView>
         </View>
       </View>
     </SafeAreaView>
