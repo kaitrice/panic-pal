@@ -2,7 +2,7 @@
 
 ## Authors
 
-- **Indi Cowan** (Undergraduate)
+- **Indie Cowan** (Undergraduate)
 - **Fatima Preciado** (Undergraduate)
 - **Kaitlyn Rice** (Undergraduate)
 - **Daniel Koronthaly** (Graduate)
