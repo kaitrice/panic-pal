@@ -10,8 +10,10 @@ import DragList from 'react-native-draglist';
 
 const interventionPreferenceOrder = ['Breathing', 'Grounding', 'Reassurance'];
 
+
 export default function Draggable() {
     const [data, setData] = useState(interventionPreferenceOrder);
+    const [volume, setVolume] = useState(10);
 
     function keyExtractor(str) {
         return str;
@@ -49,7 +51,11 @@ export default function Draggable() {
                 renderItem={renderItem}
             />
             <Text style={styles.header}>Volume</Text>
-            <Slider min={1} max={100} values={[10]} />
+            <Slider min={1} max={100} 
+                    values={[volume]} 
+                    onChange={(values) => {
+                        setVolume(values[0])
+                    }} />
             {/* <>
                 {data.map(info => <Text>{info}</Text>)}
             </> */}
