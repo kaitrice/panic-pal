@@ -10,26 +10,46 @@ import DragList from 'react-native-draglist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const interventionPreferenceOrder = ['Breathing', 'Grounding', 'Reassurance'];
+const defaultVolume = 10;
 
 
 export default function Draggable(sliderValue) {
     const [data, setData] = useState(interventionPreferenceOrder);
-    const [isLoading, setIsLoading] = useState(true)
-    const [volume, setVolume] = useState(10);
+    const [isInterventionsLoading, setisInterventionsLoading] = useState(true)
+    const [isVolumeLoading, setisVolumeLoading] = useState(true)
+    const [volume, setVolume] = useState(defaultVolume);
+    //AsyncStorage.removeItem('volume'); //use this to test the default volume being put into storage correctly
+    //AsyncStorage.removeItem('interventions'); //use this to test the default interventions being put into storage correctly
     useEffect(() => {
+        AsyncStorage.getItem('interventions').then((value) => {
+            if (value !== null) {
+                setData(JSON.parse(value))
+                setisInterventionsLoading(false)
+            }
+            else {
+                console.log("set default interventions order")
+                setDataAsync(interventionPreferenceOrder);
+                setisInterventionsLoading(false);
+            }
+        });
         AsyncStorage.getItem('volume').then((value) => {
             if (value !== null) {
                 setVolume(parseInt(value))
-                setIsLoading(false)
+                setisVolumeLoading(false)
+            }
+            else {
+                console.log("set default volume")
+                setVolumeAsync(defaultVolume);
+                setisVolumeLoading(false);
             }
         });
     }, [])
 
-    if(isLoading){
+    if(isVolumeLoading || isInterventionsLoading){
         console.log("loading")
         return <View><Text>Loading...</Text></View>;
     }
-    console.log(volume)
+    //console.log(volume)
     function keyExtractor(str) {
         return str;
     }
@@ -53,16 +73,26 @@ export default function Draggable(sliderValue) {
         const removed = copy.splice(fromIndex, 1);
 
         copy.splice(toIndex, 0, removed[0]); // Now insert at the new pos
-        setData(copy);
+        setDataAsync(copy);
     }
 
     async function setVolumeAsync(value) {
         try {
-            console.log("Set volume to ", value)
+            //console.log("Set volume to ", value)
             setVolume(value);
             await AsyncStorage.setItem('volume', value.toString());
         } catch (e) {
             console.log("Error setting volume")
+        }
+    }
+
+    async function setDataAsync(value) {
+        try {
+            //console.log("Set volume to ", value)
+            setData(value);
+            await AsyncStorage.setItem('interventions', JSON.stringify(value));
+        } catch (e) {
+            console.log("Error setting interventions")
         }
     }
 
