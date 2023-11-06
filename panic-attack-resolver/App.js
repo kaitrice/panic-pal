@@ -7,15 +7,17 @@ import {
 import Header from './components/Header'
 import Footer from './components/Footer'
 
+
 // Importing individual screen components
 import Chat from './components/Chat'
 import Settings from './components/Settings'
 import SOS from './components/SOS'
 import Breathing from './components/Breathing'
 import Calendar from './components/Calendar'
+import Test from './components/Test'
 
 const App = () => {
-  const [currentScreen, setCurrentScreen] = useState('Chat');
+  const [currentScreen, setCurrentScreen] = useState('Test');
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -30,7 +32,7 @@ const App = () => {
       case 'Settings':
         return <Settings />
       default:
-        return <Chat />
+        return <Test />
     }
   };
 

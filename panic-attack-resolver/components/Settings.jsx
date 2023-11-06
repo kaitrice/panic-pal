@@ -3,10 +3,13 @@ import {
     View,
 } from 'react-native'
 
-const Settings = () => (
-    <View>
-        <Text>Settings</Text>
-    </View>
-)
+const Settings = () => {
+    const settings = []
+    return (
+        <View>
+            <Text>Settings</Text>
+        </View>
+    )
+}
 
 export default Settings
