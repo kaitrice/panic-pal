@@ -17,7 +17,7 @@ import Calendar from './components/Calendar'
 import Test from './components/Test'
 
 const App = () => {
-  const [currentScreen, setCurrentScreen] = useState('Test');
+  const [currentScreen, setCurrentScreen] = useState('Chat');
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -32,7 +32,7 @@ const App = () => {
       case 'Settings':
         return <Settings />
       default:
-        return <Test />
+        return <Chat />
     }
   };
 
