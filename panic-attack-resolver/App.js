@@ -14,7 +14,6 @@ import Settings from './components/Settings'
 import SOS from './components/SOS'
 import Breathing from './components/Breathing'
 import Calendar from './components/Calendar'
-import Test from './components/Test'
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('Chat');
