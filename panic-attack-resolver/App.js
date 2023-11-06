@@ -17,7 +17,7 @@ import Calendar from './components/Calendar'
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('Chat');
-
+  
   const renderScreen = () => {
     switch (currentScreen) {
       case 'Chat':

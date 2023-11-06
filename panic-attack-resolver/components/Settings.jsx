@@ -1,5 +1,5 @@
 import Slider from "react-native-a11y-slider";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -7,14 +7,29 @@ import {
     View,
 } from 'react-native';
 import DragList from 'react-native-draglist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const interventionPreferenceOrder = ['Breathing', 'Grounding', 'Reassurance'];
 
 
-export default function Draggable() {
+export default function Draggable(sliderValue) {
     const [data, setData] = useState(interventionPreferenceOrder);
+    const [isLoading, setIsLoading] = useState(true)
     const [volume, setVolume] = useState(10);
+    useEffect(() => {
+        AsyncStorage.getItem('volume').then((value) => {
+            if (value !== null) {
+                setVolume(parseInt(value))
+                setIsLoading(false)
+            }
+        });
+    }, [])
 
+    if(isLoading){
+        console.log("loading")
+        return <View><Text>Loading...</Text></View>;
+    }
+    console.log(volume)
     function keyExtractor(str) {
         return str;
     }
@@ -41,6 +56,16 @@ export default function Draggable() {
         setData(copy);
     }
 
+    async function setVolumeAsync(value) {
+        try {
+            console.log("Set volume to ", value)
+            setVolume(value);
+            await AsyncStorage.setItem('volume', value.toString());
+        } catch (e) {
+            console.log("Error setting volume")
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Interventions</Text>
@@ -51,11 +76,11 @@ export default function Draggable() {
                 renderItem={renderItem}
             />
             <Text style={styles.header}>Volume</Text>
-            <Slider min={1} max={100} 
-                    values={[volume]} 
-                    onChange={(values) => {
-                        setVolume(values[0])
-                    }} />
+            <Slider min={1} max={100}
+                values={[volume]}
+                onChange={(values) => {
+                    setVolumeAsync(values[0])
+                }} />
             {/* <>
                 {data.map(info => <Text>{info}</Text>)}
             </> */}
@@ -79,7 +104,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'black',
         minHeight: 40,
-        minWidth: 250, 
+        minWidth: 250,
     },
     text: {
         fontWeight: 'bold',
