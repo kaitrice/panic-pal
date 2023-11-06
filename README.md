@@ -29,7 +29,7 @@ Innovative mobile application designed to provide immediate support during momen
 
 ```bash
 # Clone the repository
-git clone https://github.com/ricek20/panic-pal/panic-attack-resolver.git
+git clone https://github.com/kaitrice/panic-pal.git
 
 # Change directory to the app folder
 cd panic-attack-resolver
