@@ -6,6 +6,8 @@ import {
     View,
 } from 'react-native';
 
+import {colors} from '../values/colors'
+
 const Header = () => (
     <View style={styles.container}>
         <View style={styles.slothContainer}>
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
-        color: '#80B9E2',
+        color: colors.defaultButtonColor,
         fontSize: 36,
         fontWeight: 'bold',
     },

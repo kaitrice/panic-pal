@@ -9,12 +9,14 @@ import {
 import DragList from 'react-native-draglist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const interventionPreferenceOrder = ['Breathing', 'Grounding', 'Reassurance'];
+import {colors} from '../values/colors'
+
+const defaultInterventionOrder = ['Breathing', 'Grounding', 'Reassurance'];
 const defaultVolume = 10;
 
 
 export default function Draggable(sliderValue) {
-    const [data, setData] = useState(interventionPreferenceOrder);
+    const [data, setData] = useState(defaultInterventionOrder);
     const [isInterventionsLoading, setisInterventionsLoading] = useState(true)
     const [isVolumeLoading, setisVolumeLoading] = useState(true)
     const [volume, setVolume] = useState(defaultVolume);
@@ -28,7 +30,7 @@ export default function Draggable(sliderValue) {
             }
             else {
                 console.log("set default interventions order")
-                setDataAsync(interventionPreferenceOrder);
+                setDataAsync(defaultInterventionOrder);
                 setisInterventionsLoading(false);
             }
         });
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     item: {
-        backgroundColor: '#80B9E2',
+        backgroundColor: colors.defaultButtonColor,
         borderWidth: 1,
         borderColor: 'black',
         minHeight: 40,
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     active: {
-        //backgroundColor: 'yellow',
+        backgroundColor: 'white',
     },
     scrolledList: {
         height: 200,

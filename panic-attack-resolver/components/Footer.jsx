@@ -6,6 +6,8 @@ import {
     TouchableOpacity,
 } from 'react-native'
 
+import {colors} from '../values/colors'
+
 const CustomButton = ({ title, onPress, disabled, circle, color }) => (
     <TouchableOpacity
         onPress={onPress}
@@ -22,11 +24,11 @@ const CustomButton = ({ title, onPress, disabled, circle, color }) => (
 
 const Footer = ({ setCurrentScreen }) => (
     <View style={styles.container}>
-        <CustomButton title="Home" onPress={() => setCurrentScreen('Chat')} color="#80B9E2" />
-        <CustomButton title="Breathing" onPress={() => setCurrentScreen('Breathing')} color="#80B9E2" />
-        <CustomButton title="SOS" onPress={() => setCurrentScreen('SOS')} circle color="#FF0000" />
-        <CustomButton title="Calendar" onPress={() => setCurrentScreen('Calendar')} color="#80B9E2" />
-        <CustomButton title="More" onPress={() => setCurrentScreen('Settings')} color="#80B9E2" />
+        <CustomButton title="Home" onPress={() => setCurrentScreen('Chat')} color={colors.defaultButtonColor} />
+        <CustomButton title="Breathing" onPress={() => setCurrentScreen('Breathing')} color={colors.defaultButtonColor} />
+        <CustomButton title="SOS" onPress={() => setCurrentScreen('SOS')} circle color={colors.sosButtonColor} />
+        <CustomButton title="Calendar" onPress={() => setCurrentScreen('Calendar')} color={colors.defaultButtonColor} />
+        <CustomButton title="More" onPress={() => setCurrentScreen('Settings')} color={colors.defaultButtonColor} />
     </View>
 )
 
@@ -57,7 +59,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: '#F2F2F1',
+        color: colors.appBackgroundColor,
     },
 })
 
