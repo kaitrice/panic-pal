@@ -48,7 +48,7 @@ export default function Draggable(sliderValue) {
     }, [])
 
     if(isVolumeLoading || isInterventionsLoading){
-        console.log("loading")
+        //console.log("loading")
         return <View><Text>Loading...</Text></View>;
     }
     //console.log(volume)

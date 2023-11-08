@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         // backgroundColor: 'white',
         justifyContent: 'center',
-        padding: 10,
+        paddingBottom: 10,
     },
     button: {
         alignItems: 'center',
