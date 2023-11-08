@@ -29,7 +29,7 @@ Innovative mobile application designed to provide immediate support during momen
 
 ```bash
 # Clone the repository
-git clone <https://github.com/ricek20/panic-attack-resolver.git>
+git clone https://github.com/kaitrice/panic-pal.git
 
 # Change directory to the app folder
 cd panic-attack-resolver
@@ -37,6 +37,8 @@ cd panic-attack-resolver
 # Install dependencies
 npm install
 ```
+
+Note: You must have Node.js installed
 
 ## Usage
 
@@ -64,9 +66,9 @@ This will load your React Native app on your mobile device.
 ## Technologies Used
 
 - **Frontend Framework** [React Native](https://reactnative.dev/)
-- **Backend Framework** [Node.js](https://nodejs.dev/)
-- **Development Environment** [Expo Go](https://expo.dev/)
+<!-- - **Backend Framework** [Node.js](https://nodejs.dev/) TBD -->
 - **Large Language Model** [Llama 2](https://ai.meta.com/llama/)
+- **Development Environment** [Expo Go](https://expo.dev/)
 <!--
 - Redux for state management
 - Firebase for authentication and backend services
@@ -86,53 +88,53 @@ This will load your React Native app on your mobile device.
 
 ## Development Plan
 
-### Week 1 - 5
+### Week 5
 
-**Goal:** Research methodologies
+**Goal:** Setup welcome screen and basic app navigation
 
-**Assignment:**
+**Assignment:** Homework 3 - Final group prototype
 
 ### Week 6
 
-**Goal:** Setup basic app stucture and navigation
+**Goal:** Setup chatbot screen
 
 **Assignment:**
 
 ### Week 7
 
-**Goal:** Setup chatbot and settings screen
+**Goal:** Setup chatbot screen
 
-**Assignment:** Implementation Checkpoint 1 (25%)
+**Assignment:** Implementation Checkpoint 1
 
 ### Week 8
 
-**Goal:** Setup chat interaction
+**Goal:** Setup settings screen
 
-**Assignment:** Homework 4 - Individual, Implementation Checkpoint 2 (50%)
+**Assignment:** Homework 4 -
 
 ### Week 9
 
-**Goal:** Setup settings interaction
+**Goal:** Setup settings screen
 
-**Assignment:** 
+**Assignment:** Implementation Checkpoint 2
 
 ### Week 10
 
-**Goal:** Complete LLM integration
+**Goal:** Connect with LLM (maybe start with this to be sure correct exchange?)
 
-**Assignment:** Implementation Checkpoint 3 (75%)
+**Assignment:** Implementation Checkpoint 3
 
 ### Week 11
 
-**Goal:** Fix any 🪲 buggy behavior (add functionality)
+**Goal:** Fix any 🪲 buggy behavior
 
 **Assignment:** Project Website & Video
 
 ### Week 12
 
-**Goal:** Fix any 🪲 buggy behavior (add functionality)
+**Goal:**
 
-**Assignment:** Implementation Checkpoint 4 (100%)
+**Assignment:** Implementation Checkpoint 4
 
 ## License
 
