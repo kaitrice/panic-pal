@@ -7,6 +7,9 @@ import {
 import Header from './components/Header'
 import Footer from './components/Footer'
 
+import {colors} from './values/colors'
+
+
 // Importing individual screen components
 import Chat from './components/Chat'
 import Settings from './components/Settings'
@@ -16,7 +19,7 @@ import Calendar from './components/Calendar'
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('Chat');
-
+  
   const renderScreen = () => {
     switch (currentScreen) {
       case 'Chat':
@@ -49,7 +52,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F1',
+    backgroundColor: colors.appBackgroundColor,
     alignItems: 'center',
     justifyContent: 'space-between',
   },
