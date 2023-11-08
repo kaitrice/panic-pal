@@ -60,7 +60,7 @@ const Calendar = () => {
                           {item.weekday}
                         </Text>
                         <Text style={[styles.itemDate, isActive && {color: '#fff'}]}>
-                          {item.date.getDate ()}
+                          {item.date.getDate()}
                         </Text>
                       </View>
                     </TouchableWithoutFeedback>
