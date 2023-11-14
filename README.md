@@ -34,6 +34,9 @@ git clone https://github.com/kaitrice/panic-pal.git
 # Change directory to the app folder
 cd panic-attack-resolver
 
+# Rebuild currently failing package-loc
+rm package-lock.json
+
 # Install dependencies
 npm install
 ```
