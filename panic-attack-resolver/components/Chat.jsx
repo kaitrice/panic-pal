@@ -6,21 +6,20 @@ import {
     TextInput,
     View,
     StyleSheet,
+    KeyboardAvoidingView,
+    Platform,
+    Keyboard
 } from 'react-native';
 import axios from 'axios'; // Import axios
-import OpenAI from "openai";
+
+
 // Replace with your actual OpenAI API key and manage it securely
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = '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';
 
 const Chat = () => {
-    // const openai = new OpenAI({
-    //     apiKey: OPENAI_API_KEY,
-    // });
-
     const systemMessage = {
-        "id": Date.now(),
         "role": 'system',
-        "content": "You are a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. You help people get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. Keep your responses shorter than 100 words in order to respond quickly.",
+        "content": "The assistant is a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. The assistant helps the user get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. Keep responses very concise and brief.",
     };
     const [userInput, setCurrentInput] = useState('');
     const [chatHistory, setMessages] = useState([systemMessage]);
@@ -35,10 +34,12 @@ const Chat = () => {
 
     const handleSend = async () => {
         const userMessage = {
-            "id": Date.now(),
             "role": 'user',
             "content": userInput,
         };
+
+        const updatedChatHistory = [...chatHistory, userMessage];
+        console.log('updatedChatHistory: ', updatedChatHistory);
 
         // Add user message to chat history
         setMessages((prevMessages) => [...prevMessages, userMessage]);
@@ -47,12 +48,7 @@ const Chat = () => {
         setCurrentInput('');
 
         // Send user input to LLM API and get response
-        console.log('chatHistory: ', chatHistory);
-        console.log('typeof chatHistory: ', typeof chatHistory);
-        console.log(Array.isArray(chatHistory)); // This will return true if chatHistory is an array
-        console.log('chatHistory[0]: ', chatHistory[0]);
-        console.log('typeof chatHistory[0]: ', typeof chatHistory[0]);
-        const botMessage = await getBotResponse(chatHistory);
+        const botMessage = await getBotResponse(updatedChatHistory);
 
         // Add bot response to chat history
         setMessages((prevMessages) => [...prevMessages, botMessage]);
@@ -64,13 +60,7 @@ const Chat = () => {
                 'https://api.openai.com/v1/chat/completions',
                 {
                     model: 'gpt-3.5-turbo',
-                    messages: [{
-                        "id": Date.now(),
-                        "role": 'system',
-                        "content": "You are a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. You help people get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. Keep your responses shorter than 100 words in order to respond quickly.",
-                        },
-                        { "role": 'user', "content": "I'm having a panic attack right now. I feel like I'm going to die." }
-                    ],
+                    messages: messages,
                 },
                 {
                     headers: {
@@ -80,18 +70,15 @@ const Chat = () => {
                 }
             );
 
-            console.log('response: ', response);
-
             const botMessage = {
-                "id": Date.now(),
-                "role": 'bot',
+                "role": 'assistant',
                 "content": response.data.choices[0].message.content,
             };
             return botMessage;
+
         } catch (error) {
             console.error('Error getting bot response: ', error);
             return {
-                "id": Date.now(),
                 "role": 'assistant',
                 "content": 'Sorry, I am having trouble understanding that.',
             };
@@ -99,16 +86,27 @@ const Chat = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView 
+            style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        >
             <FlatList
                 ref={flatListRef}
                 data={chatHistory}
-                keyExtractor={(item) => item["id"].toString()}
-                renderItem={({ item }) => (
-                    <View style={item["role"] === 'user' ? styles.userMessage : styles.botMessage}>
-                        <Text>{item["content"]}</Text>
-                    </View>
-                )}
+                keyExtractor={(item, index) => index.toString()}
+                onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+                renderItem={({ item }) => {
+                    if (item.role !== 'system') { // Check if the message role is not 'system'
+                        return (
+                            <View style={item.role === 'user' ? styles.userMessage : styles.botMessage}>
+                                <Text>{item.content}</Text>
+                            </View>
+                        );
+                    } else {
+                        return null; // Do not render anything for 'system' role messages
+                    }
+                }}
             />
             <TextInput
                 style={styles.input}
@@ -117,7 +115,7 @@ const Chat = () => {
                 placeholder="Type your message here..."
             />
             <Button title='Send' onPress={handleSend} />
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
