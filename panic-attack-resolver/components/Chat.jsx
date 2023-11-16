@@ -12,9 +12,8 @@ import {
 } from 'react-native';
 import axios from 'axios'; // Import axios
 
-
 // Replace with your actual OpenAI API key and manage it securely
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = '';
 
 const Chat = () => {
     const systemMessage = {
@@ -24,9 +23,25 @@ const Chat = () => {
     const [userInput, setCurrentInput] = useState('');
     const [chatHistory, setMessages] = useState([systemMessage]);
     const flatListRef = useRef();
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     useEffect(() => {
-        // Automatically scroll to the bottom whenever the chatHistory updates
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            (e) => setKeyboardHeight(e.endCoordinates.height)
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => setKeyboardHeight(0)
+        );
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
+
+    useEffect(() => {
         if (flatListRef.current) {
             flatListRef.current.scrollToEnd({ animated: true });
         }
@@ -38,19 +53,10 @@ const Chat = () => {
             "content": userInput,
         };
 
-        const updatedChatHistory = [...chatHistory, userMessage];
-        console.log('updatedChatHistory: ', updatedChatHistory);
-
-        // Add user message to chat history
         setMessages((prevMessages) => [...prevMessages, userMessage]);
-
-        // Clear user input
         setCurrentInput('');
 
-        // Send user input to LLM API and get response
-        const botMessage = await getBotResponse(updatedChatHistory);
-
-        // Add bot response to chat history
+        const botMessage = await getBotResponse([...chatHistory, userMessage]);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
     };
 
@@ -70,11 +76,10 @@ const Chat = () => {
                 }
             );
 
-            const botMessage = {
+            return {
                 "role": 'assistant',
                 "content": response.data.choices[0].message.content,
             };
-            return botMessage;
 
         } catch (error) {
             console.error('Error getting bot response: ', error);
@@ -87,9 +92,9 @@ const Chat = () => {
 
     return (
         <KeyboardAvoidingView 
-            style={styles.container}
+            style={[styles.container, { paddingBottom: keyboardHeight }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+            keyboardVerticalOffset={115}
         >
             <FlatList
                 ref={flatListRef}
@@ -97,53 +102,84 @@ const Chat = () => {
                 keyExtractor={(item, index) => index.toString()}
                 onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
                 renderItem={({ item }) => {
-                    if (item.role !== 'system') { // Check if the message role is not 'system'
+                    // Check if the message role is 'user' and apply the userMessage style
+                    if (item.role === 'user') {
                         return (
-                            <View style={item.role === 'user' ? styles.userMessage : styles.botMessage}>
-                                <Text>{item.content}</Text>
+                            <View style={styles.messageContainer}>
+                                <View style={[styles.userMessage, { marginLeft: 'auto' }]}>
+                                    <Text>{item.content}</Text>
+                                </View>
+                            </View>
+                        );
+                    // Otherwise, assume it's an 'assistant' message and apply the assistantMessage style
+                    } else if (item.role === 'assistant') {
+                        return (
+                            <View style={styles.messageContainer}>
+                                <View style={styles.assistantMessage}>
+                                    <Text>{item.content}</Text>
+                                </View>
                             </View>
                         );
                     } else {
-                        return null; // Do not render anything for 'system' role messages
+                        // Don't render system messages
+                        return null;
                     }
                 }}
             />
-            <TextInput
-                style={styles.input}
-                value={userInput}
-                onChangeText={setCurrentInput}
-                placeholder="Type your message here..."
-            />
-            <Button title='Send' onPress={handleSend} />
+            <View style={styles.inputAreaContainer}>
+                <TextInput
+                    style={styles.input}
+                    value={userInput}
+                    onChangeText={setCurrentInput}
+                    placeholder="Type your message here..."
+                />
+                {/* The Button component in React Native does not accept the style prop.
+                    If you want to style the button, consider using a TouchableOpacity or similar. */}
+                <Button title='Send' onPress={handleSend} />
+            </View>
         </KeyboardAvoidingView>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
+        width: '100%', // Explicitly set the width to be 100% of the screen
+    },
+    inputAreaContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
     },
     input: {
+        flex: 1,
         borderWidth: 1,
         borderColor: 'grey',
         padding: 10,
         borderRadius: 5,
-        marginBottom: 10,
+        marginRight: 10, // Add space between the input and the send button
+    },
+    messageContainer: {
+        flexDirection: 'row',
+        width: '100%',
     },
     userMessage: {
         padding: 10,
         backgroundColor: '#DCF8C6',
-        alignSelf: 'flex-end',
         borderRadius: 10,
         marginBottom: 5,
+        maxWidth: '80%', // Taking up to 80% of the container width
+        // No marginLeft needed since the container itself will fill the screen width
     },
-    botMessage: {
+    assistantMessage: {
         padding: 10,
         backgroundColor: '#FFF',
-        alignSelf: 'flex-start',
         borderRadius: 10,
         marginBottom: 5,
+        maxWidth: '80%', // Taking up to 80% of the container width
+        // No marginRight needed for the same reason
     },
 });
 
