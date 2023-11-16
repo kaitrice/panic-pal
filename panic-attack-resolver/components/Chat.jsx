@@ -11,9 +11,11 @@ import {
     Keyboard
 } from 'react-native';
 import axios from 'axios'; // Import axios
+import Constants from 'expo-constants';
 
-// Replace with your actual OpenAI API key and manage it securely
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = Constants.expoConfig.extra.openAiApiKey;
+
+console.log('OPENAI_API_KEY: ', OPENAI_API_KEY);
 
 const Chat = () => {
     const systemMessage = {
@@ -100,7 +102,7 @@ const Chat = () => {
         <KeyboardAvoidingView 
             style={[styles.container, { paddingBottom: keyboardHeight + 100 }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={115}
+            keyboardVerticalOffset={120}
         >
             <FlatList
                 ref={flatListRef}
@@ -165,6 +167,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 10,
+        width: '100%',
     },
     input: {
         flex: 1,
