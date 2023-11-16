@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around', // This will distribute space around the buttons equally
         alignItems: 'center', // This ensures all buttons are aligned in the center vertically
-        paddingBottom: 10,
+        paddingBottom: 20,
     },
     button: {
         height: 70, // TODO: Adjust height to be dynamic

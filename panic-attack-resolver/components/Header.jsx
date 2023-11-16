@@ -7,32 +7,49 @@ import {
 } from 'react-native';
 
 import {colors} from '../values/colors'
+import { StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native';
 
 const Header = () => (
-    <View style={styles.container}>
-        <View style={styles.slothContainer}>
-            <Sloth variant="variant3" style={styles.sloth} />
+    <SafeAreaView style={styles.outerContainer}>
+        <View style={styles.container}>
+            <View style={styles.slothContainer}>
+                <Sloth variant="variant3" style={styles.sloth} />
+            </View>
+            <View style={styles.textContainer}>
+                <Text style={styles.title}>Panic Pal</Text>
+                <Text style={styles.subtitle}>Panic Attack Resolver</Text>
+            </View>
         </View>
-        <View style={styles.textContainer}>
-            <Text style={styles.title}>Panic Pal</Text>
-            <Text style={styles.subtitle}>Panic Attack Resolver</Text>
-        </View>
-    </View>
+    </SafeAreaView>
 );
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: 'white',
+    outerContainer: {
+        backgroundColor: '#524434',
         width: '100%',
-        paddingTop: 40,
+        paddingTop: StatusBar.currentHeight || 40,
         paddingBottom: 20,
+    },
+    container: {
+        backgroundColor: '#ffffff',
+        width: '100%',
+        paddingTop: 10,
+        paddingBottom: 10,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
     },
     slothContainer: {
-        flex: 1,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
+        // flex: 1,
+        // alignItems: 'flex-start',
+        // justifyContent: 'center',
+        position: 'absolute', // Position the sloth absolutely
+        // top: StatusBar.currentHeight || 40, // Start at the absolute top of the screen
+        top: -2,
+        left: 0, // Align to the left of the screen
+        right: 0, // Ensure it stretches across to the right
+        alignItems: 'left',
     },
     textContainer: {
         flex: 3,

@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     },
     userMessage: {
         padding: 10,
-        backgroundColor: '#DCF8C6',
+        backgroundColor: '#b3c97b95',
         borderRadius: 10,
         marginBottom: 5,
         maxWidth: '80%', // Taking up to 80% of the container width
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     },
     assistantMessage: {
         padding: 10,
-        backgroundColor: '#FFF',
+        backgroundColor: '#ffbac995',
         borderRadius: 10,
         marginBottom: 5,
         maxWidth: '80%', // Taking up to 80% of the container width
