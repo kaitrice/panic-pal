@@ -8,11 +8,15 @@ import {
     StyleSheet,
 } from 'react-native';
 import axios from 'axios'; // Import axios
-
+import OpenAI from "openai";
 // Replace with your actual OpenAI API key and manage it securely
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = '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';
 
 const Chat = () => {
+    // const openai = new OpenAI({
+    //     apiKey: OPENAI_API_KEY,
+    // });
+
     const systemMessage = {
         "id": Date.now(),
         "role": 'system',
@@ -44,19 +48,29 @@ const Chat = () => {
 
         // Send user input to LLM API and get response
         console.log('chatHistory: ', chatHistory);
+        console.log('typeof chatHistory: ', typeof chatHistory);
+        console.log(Array.isArray(chatHistory)); // This will return true if chatHistory is an array
+        console.log('chatHistory[0]: ', chatHistory[0]);
+        console.log('typeof chatHistory[0]: ', typeof chatHistory[0]);
         const botMessage = await getBotResponse(chatHistory);
 
         // Add bot response to chat history
         setMessages((prevMessages) => [...prevMessages, botMessage]);
     };
 
-    const getBotResponse = async (input) => {
+    const getBotResponse = async (messages) => {
         try {
             const response = await axios.post(
                 'https://api.openai.com/v1/chat/completions',
                 {
                     model: 'gpt-3.5-turbo',
-                    messages: chatHistory,
+                    messages: [{
+                        "id": Date.now(),
+                        "role": 'system',
+                        "content": "You are a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. You help people get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. Keep your responses shorter than 100 words in order to respond quickly.",
+                        },
+                        { "role": 'user', "content": "I'm having a panic attack right now. I feel like I'm going to die." }
+                    ],
                 },
                 {
                     headers: {
@@ -65,6 +79,8 @@ const Chat = () => {
                     }
                 }
             );
+
+            console.log('response: ', response);
 
             const botMessage = {
                 "id": Date.now(),
