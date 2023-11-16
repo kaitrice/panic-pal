@@ -13,7 +13,7 @@ import {
 import axios from 'axios'; // Import axios
 
 // Replace with your actual OpenAI API key and manage it securely
-const OPENAI_API_KEY = '';
+const OPENAI_API_KEY = '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';
 
 const Chat = () => {
     const systemMessage = {
@@ -24,6 +24,7 @@ const Chat = () => {
     const [chatHistory, setMessages] = useState([systemMessage]);
     const flatListRef = useRef();
     const [keyboardHeight, setKeyboardHeight] = useState(0);
+    const [inputAreaHeight, setInputAreaHeight] = useState(0);
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -59,6 +60,10 @@ const Chat = () => {
 
         const botMessage = await getBotResponse([...chatHistory, userMessage]);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
+
+        setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: true });
+        }, 100);
     };
 
     const getBotResponse = async (messages) => {
@@ -100,8 +105,10 @@ const Chat = () => {
             <FlatList
                 ref={flatListRef}
                 data={chatHistory}
+                extraData={chatHistory}
                 keyExtractor={(item, index) => index.toString()}
                 onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+                contentContainerStyle={{ paddingBottom: inputAreaHeight }}
                 renderItem={({ item }) => {
                     // Check if the message role is 'user' and apply the userMessage style
                     if (item.role === 'user') {
@@ -127,7 +134,12 @@ const Chat = () => {
                     }
                 }}
             />
-            <View style={styles.inputAreaContainer}>
+            <View style={styles.inputAreaContainer}
+                onLayout={(event) => {
+                    const { height } = event.nativeEvent.layout;
+                    setInputAreaHeight(height);
+                }}
+            >
                 <TextInput
                     style={styles.input}
                     value={userInput}
@@ -165,6 +177,7 @@ const styles = StyleSheet.create({
     messageContainer: {
         flexDirection: 'row',
         width: '100%',
+        // paddingBottom: keyboardHeight + 100,
     },
     userMessage: {
         padding: 10,
