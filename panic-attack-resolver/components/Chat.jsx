@@ -28,16 +28,17 @@ const Chat = () => {
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
-            (e) => setKeyboardHeight(e.endCoordinates.height)
-        );
-        const keyboardDidHideListener = Keyboard.addListener(
-            'keyboardDidHide',
-            () => setKeyboardHeight(0)
+            (e) => {
+                setKeyboardHeight(e.endCoordinates.height);
+                // Scroll to end of FlatList
+                if (flatListRef.current) {
+                    flatListRef.current.scrollToEnd({ animated: true });
+                }
+            }
         );
 
         return () => {
             keyboardDidShowListener.remove();
-            keyboardDidHideListener.remove();
         };
     }, []);
 
@@ -92,7 +93,7 @@ const Chat = () => {
 
     return (
         <KeyboardAvoidingView 
-            style={[styles.container, { paddingBottom: keyboardHeight }]}
+            style={[styles.container, { paddingBottom: keyboardHeight + 100 }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={115}
         >
