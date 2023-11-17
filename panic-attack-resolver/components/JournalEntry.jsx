@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { colors } from '../values/colors'
+
 const JournalEntry = () => {
     const [journalText, setJournalText] = useState('');
     const [journalEntries, setJournalEntries] = useState([]);
@@ -64,8 +66,8 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 250,
-    borderColor: '#82C2E5',
-    backgroundColor: '#82C2E5',
+    borderColor: colors.defaultButtonColor,
+    backgroundColor: colors.defaultButtonColor,
     borderWidth: 1,
     borderRadius: 5,
     padding: 8,

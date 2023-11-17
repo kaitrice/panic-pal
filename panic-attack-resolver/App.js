@@ -16,12 +16,15 @@ import Settings from './components/Settings'
 import SOS from './components/SOS'
 import Breathing from './components/Breathing'
 import Calendar from './components/Calendar'
+import Login from './components/Login'
 
 const App = () => {
-  const [currentScreen, setCurrentScreen] = useState('Chat');
+  const [currentScreen, setCurrentScreen] = useState('Login');
   
   const renderScreen = () => {
     switch (currentScreen) {
+      case 'Login':
+        return <Login />
       case 'Chat':
         return <Chat />
       case 'Breathing':
@@ -33,7 +36,7 @@ const App = () => {
       case 'Settings':
         return <Settings />
       default:
-        return <Chat />
+        return <Login />
     }
   };
 

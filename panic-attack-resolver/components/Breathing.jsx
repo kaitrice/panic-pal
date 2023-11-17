@@ -7,7 +7,7 @@ import {
 import React, { useState, useEffect } from 'react';
 import {colors} from '../values/colors'
 
-const secondsPause = 2;
+const secondsPause = 1;
 const startTime = 2;
 const defaultBreatheInTime = 6;
 const defaultBreatheOutTime = 6;

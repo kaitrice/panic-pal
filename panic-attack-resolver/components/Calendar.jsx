@@ -4,6 +4,8 @@ import moment from 'moment';
 import Swiper from 'react-native-swiper';
 import JournalEntry from "./JournalEntry";
 
+import { colors } from '../values/colors'
+
 const windowWidth = Dimensions.get ('window').width;
 
 const Calendar = () => {
@@ -55,7 +57,7 @@ const Calendar = () => {
                   const isActive = value.toDateString () === item.date.toDateString ();
                   return (
                     <TouchableWithoutFeedback key={dateIndex} onPress={() => setValue (item.date)}>
-                      <View style={[styles.item, isActive && {backgroundColor: '#80B9E2', borderColor: '#80B9E2'}]}>
+                      <View style={[styles.item, isActive && {backgroundColor: colors.defaultButtonColor, borderColor: colors.defaultButtonColor}]}>
                         <Text style={[styles.itemWeekday, isActive && {color: '#fff'}]}>
                           {item.weekday}
                         </Text>

@@ -9,7 +9,7 @@ import {
 import DragList from 'react-native-draglist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {colors} from '../values/colors'
+import { colors } from '../values/colors'
 
 const defaultInterventionOrder = ['Breathing', 'Grounding', 'Reassurance'];
 const defaultVolume = 10;
@@ -47,7 +47,7 @@ export default function Draggable(sliderValue) {
         });
     }, [])
 
-    if(isVolumeLoading || isInterventionsLoading){
+    if (isVolumeLoading || isInterventionsLoading) {
         //console.log("loading")
         return <View><Text>Loading...</Text></View>;
     }
@@ -57,15 +57,19 @@ export default function Draggable(sliderValue) {
     }
 
     function renderItem(info) {
-        const { item, onDragStart, onDragEnd, isActive } = info;
 
+        const { item, onDragStart, onDragEnd, isActive } = info;
         return (
             <TouchableOpacity
                 key={item}
                 style={[styles.item, isActive && styles.active]}
                 onPressIn={onDragStart}
                 onPressOut={onDragEnd}>
-                <Text style={styles.text}>{item}</Text>
+                <View style={styles.rowContainer}>
+                    <Text style={styles.text}>{item}</Text>
+                    <Text style={styles.index}>{data.indexOf(item) + 1}</Text>
+                </View>
+
             </TouchableOpacity>
         );
     }
@@ -121,6 +125,11 @@ export default function Draggable(sliderValue) {
 }
 
 const styles = StyleSheet.create({
+    rowContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        // backgroundColor: 'white',
+    },
     container: {
         marginTop: 10,
         padding: 10,
@@ -139,8 +148,19 @@ const styles = StyleSheet.create({
         minWidth: 250,
     },
     text: {
+        justifyContent: "flex-start",
+        flex: 1,
         fontWeight: 'bold',
         fontSize: 20,
+        paddingLeft: 5
+    },
+    index: {
+        textAlign: "right",
+        justifyContent: "flex-end",
+        flex: 0.5,
+        fontWeight: 'bold',
+        fontSize: 20,
+        paddingRight: 10
     },
     active: {
         backgroundColor: 'white',
