@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     button: {
         height: 70, // TODO: Adjust height to be dynamic
         flex: 1, // This allows each button to grow and take an equal amount of space
+        aspectRatio: 1,
         alignItems: 'center',
         justifyContent: 'center',
         margin: 2,
