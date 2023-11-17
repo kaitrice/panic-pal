@@ -7,6 +7,7 @@ import {
   Linking,
   ScrollView,
 } from 'react-native';
+import {colors} from '../values/colors'
 
 const HotlineSOS = () => {
   const [showHotlineOptions, setShowHotlineOptions] = useState (false);
@@ -102,7 +103,7 @@ const styles = StyleSheet.create ({
     textAlign: 'center',
   },
   hotlineButton: {
-    backgroundColor: '#f4c2c2',
+    backgroundColor: colors.sosButtonColor,
     padding: 12,
     borderRadius: 8,
     marginVertical: 8,

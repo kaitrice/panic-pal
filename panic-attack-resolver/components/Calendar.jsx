@@ -3,6 +3,7 @@ import {StyleSheet, SafeAreaView, View, ScrollView, TouchableWithoutFeedback, Te
 import moment from 'moment';
 import Swiper from 'react-native-swiper';
 import JournalEntry from "./JournalEntry";
+import {colors} from '../values/colors'
 
 const windowWidth = Dimensions.get ('window').width;
 
@@ -55,7 +56,7 @@ const Calendar = () => {
                   const isActive = value.toDateString () === item.date.toDateString ();
                   return (
                     <TouchableWithoutFeedback key={dateIndex} onPress={() => setValue (item.date)}>
-                      <View style={[styles.item, isActive && {backgroundColor: '#80B9E2', borderColor: '#80B9E2'}]}>
+                      <View style={[styles.item, isActive && {backgroundColor: colors.specialButtonColor, borderColor: colors.specialButtonColor}]}>
                         <Text style={[styles.itemWeekday, isActive && {color: '#fff'}]}>
                           {item.weekday}
                         </Text>
@@ -105,14 +106,14 @@ const styles = StyleSheet.create ({
     paddingVertical: 6,
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: '#e3e3e3',
+    borderColor: colors.specialButtonColor,
     flexDirection: 'column',
     alignItems: 'center',
   },
   itemWeekday: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#737373',
+    color: colors.specialButtonColor,
     marginBottom: 4,
   },
   itemDate: {

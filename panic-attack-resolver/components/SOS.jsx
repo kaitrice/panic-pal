@@ -9,6 +9,7 @@ import {
   Linking,
 } from 'react-native';
 import * as Contacts from 'expo-contacts';
+import {colors} from '../values/colors'
 
 const windowWidth = Dimensions.get ('window').width;
 
@@ -88,7 +89,7 @@ const styles = StyleSheet.create ({
     color: '#666',
   },
   callButton: {
-    backgroundColor: '#997950',
+    backgroundColor: colors.specialButtonColor,
     padding: 8,
     borderRadius: 4,
   },
