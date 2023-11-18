@@ -11,11 +11,6 @@ import {
     Keyboard
 } from 'react-native';
 import axios from 'axios'; // Import axios
-import Constants from 'expo-constants';
-
-const OPENAI_API_KEY = "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";
-
-console.log('OPENAI_API_KEY: ', OPENAI_API_KEY);
 
 const Chat = () => {
     const systemMessage = {
