@@ -3,6 +3,8 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {colors} from '../values/colors'
 
+import { colors } from '../values/colors'
+
 const JournalEntry = () => {
     const [journalText, setJournalText] = useState('');
     const [journalEntries, setJournalEntries] = useState([]);

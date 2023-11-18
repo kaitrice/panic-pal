@@ -5,6 +5,8 @@ import Swiper from 'react-native-swiper';
 import JournalEntry from "./JournalEntry";
 import {colors} from '../values/colors'
 
+import { colors } from '../values/colors'
+
 const windowWidth = Dimensions.get ('window').width;
 
 const Calendar = () => {
