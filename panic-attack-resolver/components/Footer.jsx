@@ -82,7 +82,7 @@ const Footer = ({ setCurrentScreen }) => {
     <View style={styles.container}>
         <CustomIconButtonI iconName="ios-home" onPress={() => setCurrentScreen('Chat')} color={colors.defaultButtonColor} />
         <CustomIconButtonF iconName="circle" onPress={() => setCurrentScreen('Breathing')} color={colors.defaultButtonColor} />
-        <CustomTextButton text="SOS" onPress={() =>  handleSOSClick()} circle color={colors.sosButtonColor} />
+        <CustomIconButtonF iconName="phone" onPress={() =>  handleSOSClick()} circle color={colors.sosButtonColor} />
         <CustomIconButtonI iconName="calendar" onPress={() => setCurrentScreen('Calendar')} color={colors.defaultButtonColor} />
         <CustomIconButtonI iconName="settings" onPress={() => setCurrentScreen('Settings')} color={colors.defaultButtonColor} />
     </View>
