@@ -20,6 +20,10 @@ const HotlineSOS = () => {
     Linking.openURL (`tel:${number}`);
   };
 
+  const handleTextHotline = (number, message) => {
+    Linking.openURL(`sms:${number}${Platform.OS === "ios" ? "&" : "?"}body=${message}`);
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -41,11 +45,11 @@ const HotlineSOS = () => {
         {showHotlineOptions &&
           <View>
             <TouchableOpacity
-              onPress={() => handleCallHotline ('741741')}
+              onPress={() => handleTextHotline ('741741', 'HELLO')}
               style={styles.hotlineButton}
             >
               <Text style={styles.hotlineButtonText}>
-                Crisis Text Line (Text HELLO to 741741)
+                Crisis Text Line
               </Text>
             </TouchableOpacity>
 
@@ -54,7 +58,7 @@ const HotlineSOS = () => {
               style={styles.hotlineButton}
             >
               <Text style={styles.hotlineButtonText}>
-                Mental Health Anxiety Hotline (1-866-903-3787)
+                Mental Health Anxiety Hotline
               </Text>
             </TouchableOpacity>
 
@@ -63,7 +67,7 @@ const HotlineSOS = () => {
               style={styles.hotlineButton}
             >
               <Text style={styles.hotlineButtonText}>
-                Crisis Support Services (1-800-273-8255)
+                Crisis Support Services 
               </Text>
             </TouchableOpacity>
           </View>}
@@ -92,7 +96,7 @@ const styles = StyleSheet.create ({
     textAlign: 'center',
   },
   toggleButton: {
-    backgroundColor: '#997950',
+    backgroundColor: colors.specialButtonColor,
     padding: 12,
     borderRadius: 8,
     marginVertical: 12,
@@ -103,7 +107,7 @@ const styles = StyleSheet.create ({
     textAlign: 'center',
   },
   hotlineButton: {
-    backgroundColor: colors.sosButtonColor,
+    backgroundColor: colors.specialButtonColor,
     padding: 12,
     borderRadius: 8,
     marginVertical: 8,
