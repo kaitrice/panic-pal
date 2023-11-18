@@ -1,10 +1,6 @@
-import React from 'react'
-import {
-    StyleSheet,
-    View,
-    Text,
-    TouchableOpacity,
-} from 'react-native'
+import React from "react";
+import { StyleSheet, View, Text, Alert, TouchableOpacity } from "react-native";
+import * as Contacts from "expo-contacts";
 
 import {colors} from '../values/colors'
 import { Ionicons } from '@expo/vector-icons';
@@ -52,15 +48,46 @@ const CustomTextButton = ({ text, onPress, disabled, circle, color }) => (
     </TouchableOpacity>
 )
 
-const Footer = ({ setCurrentScreen }) => (
+const Footer = ({ setCurrentScreen }) => {
+  const handleSOSClick = async () => {
+    Alert.alert(
+      "Panic Pal would like to access your contacts",
+      "We need to access your contacts so you can quickly call a loved one when you need them most.",
+      [
+        {
+          text: "Don't Allow",
+          onPress: () => {
+            setCurrentScreen("HotlineSOS");
+            console.log("Permission denied");
+          },
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            const { status } = await Contacts.requestPermissionsAsync();
+            if (status === "granted") {
+              console.log("Permission granted");
+              setCurrentScreen("SOS");
+            } else {
+              console.log("Permission denied");
+              setCurrentScreen("HotlineSOS");
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  return (
     <View style={styles.container}>
         <CustomIconButtonI iconName="ios-home" onPress={() => setCurrentScreen('Chat')} color={colors.defaultButtonColor} />
         <CustomIconButtonF iconName="circle" onPress={() => setCurrentScreen('Breathing')} color={colors.defaultButtonColor} />
-        <CustomTextButton text="SOS" onPress={() => setCurrentScreen('SOS')} circle color={colors.sosButtonColor} />
+        <CustomTextButton text="SOS" onPress={() =>  handleSOSClick()} circle color={colors.sosButtonColor} />
         <CustomIconButtonI iconName="calendar" onPress={() => setCurrentScreen('Calendar')} color={colors.defaultButtonColor} />
         <CustomIconButtonI iconName="settings" onPress={() => setCurrentScreen('Settings')} color={colors.defaultButtonColor} />
     </View>
-)
+  );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -95,4 +122,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Footer
+export default Footer;
