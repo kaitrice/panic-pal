@@ -1,4 +1,7 @@
 {
+  "name": "PanicPal",
+  "displayName": "PanicPal", 
+
   "expo": {
     "name": "panic-attack-resolver",
     "slug": "panic-attack-resolver",

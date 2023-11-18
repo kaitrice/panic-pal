@@ -3,6 +3,7 @@ export const colors = {
     sosButtonColor: '#e30242',
     defaultButtonColor: '#b3c97b',
     loginButtonColor: '#6C8F12'
+    specialButtonColor: '#997950',
     // '#a4b870'
     
     // your colors

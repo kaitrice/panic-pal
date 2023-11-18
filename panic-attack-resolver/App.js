@@ -14,9 +14,11 @@ import {colors} from './values/colors'
 import Chat from './components/Chat'
 import Settings from './components/Settings'
 import SOS from './components/SOS'
+import HotlineSOS from './components/HotlineSOS'
 import Breathing from './components/Breathing'
 import Calendar from './components/Calendar'
 import Login from './components/Login'
+
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('Login');
@@ -31,6 +33,8 @@ const App = () => {
         return <Breathing />
       case 'SOS':
         return <SOS />
+      case 'HotlineSOS':
+        return <HotlineSOS />
       case 'Calendar':
         return <Calendar />
       case 'Settings':
