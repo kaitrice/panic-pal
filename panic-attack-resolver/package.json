@@ -12,8 +12,9 @@
     "@react-native-async-storage/async-storage": "1.18.2",
     "axios": "^1.6.2",
     "dotenv": "^16.3.1",
-    "expo": "^49.0.16",
-    "expo-constants": "^14.4.2",
+    "expo": "^49.0.18",
+    "expo-constants": "~14.4.2",
+    "expo-secure-store": "~12.3.1",
     "expo-status-bar": "~1.6.0",
     "firebase": "^10.6.0",
     "moment": "^2.29.4",
@@ -30,7 +31,8 @@
     "react-native-swiper": "^1.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "metro-config": "^0.80.1"
   },
   "private": true
 }
