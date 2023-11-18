@@ -28,7 +28,7 @@ const CenteredButton = ({ title, onPress, disabled, circle, color, seconds }) =>
             { backgroundColor: color },
         ]}
     >
-        <Text style={styles.buttonText}>{title}</Text>
+        <Text style={styles.buttonText}>{seconds}</Text>
     </TouchableOpacity>
 )
 
