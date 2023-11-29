@@ -9,13 +9,15 @@
 
 ## Description
 
-Innovative mobile application designed to provide immediate support during moments of panic and anxiety. Our app enables users to engage in text-based conversations with a Generative AI, leveraging advanced language models such as Llama.
+Innovative mobile application designed to provide immediate support during moments of panic and anxiety. Our app enables users to engage in text-based conversations with ChatGPT.
 
 ### Timeline: September 27 - December 15, 2023
 
 ## Key Features
 
-- **Instant Support:** Chat with the Generative AI to receive guidance and assistance when experiencing a panic attack.
+- **Instant Support:** Chat with the AI to receive guidance and assistance when experiencing a panic attack.
+- **Breathing Activity:** Engage in a calming breathing activity.
+- **Contacts Integration:** Quickly access mental health hotlines, or call one of your contacts.
 
 <!--
 - **Adaptability:** Our AI is not static; it can evolve and expand its capabilities over time. This includes training it to handle new situations effectively.
@@ -33,9 +35,6 @@ git clone https://github.com/kaitrice/panic-pal.git
 
 # Change directory to the app folder
 cd panic-attack-resolver
-
-# Rebuild currently failing package-loc
-rm package-lock.json
 
 # Install dependencies
 npm install
@@ -69,9 +68,11 @@ This will load your React Native app on your mobile device.
 ## Technologies Used
 
 - **Frontend Framework** [React Native](https://reactnative.dev/)
-<!-- - **Backend Framework** [Node.js](https://nodejs.dev/) TBD -->
-- **Large Language Model** [Llama 2](https://ai.meta.com/llama/)
+- **Large Language Model** [ChatGPT](https://openai.com/chatgpt)
 - **Development Environment** [Expo Go](https://expo.dev/)
+- **Database** [Firebase](https://firebase.google.com/)
+- **Server-Side Processing** [Microsoft Azure](https://azure.microsoft.com/en-us)
+<!-- - **Backend Framework** [Node.js](https://nodejs.dev/) TBD -->
 <!--
 - Redux for state management
 - Firebase for authentication and backend services
