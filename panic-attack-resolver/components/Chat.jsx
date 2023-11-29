@@ -11,11 +11,6 @@ import {
     Keyboard
 } from 'react-native';
 import axios from 'axios'; // Import axios
-import Constants from 'expo-constants';
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-console.log('OPENAI_API_KEY: ', OPENAI_API_KEY);
 
 const Chat = () => {
     const systemMessage = {
@@ -69,37 +64,29 @@ const Chat = () => {
     };
 
     const getBotResponse = async (messages) => {
+        console.log(messages);
         try {
             const response = await axios.post(
-                'https://api.openai.com/v1/chat/completions',
+                'https://panicpal.azurewebsites.net/api/PanicPal?code=o3_4CaEJP8c1jTBF2CUeUSlnwlj8oDwSrK6jiuG4ZPHnAzFuUUyCIg==',
                 {
-                    model: 'gpt-3.5-turbo',
+
                     messages: messages,
-                },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-                        'Content-Type': 'application/json'
-                    }
                 }
             );
-
-            return {
-                "role": 'assistant',
-                "content": response.data.choices[0].message.content,
-            };
+            console.log(response.data);
+            return response.data;
 
         } catch (error) {
             console.error('Error getting bot response: ', error);
             return {
                 "role": 'assistant',
-                "content": 'Sorry, I am having trouble understanding that.',
+                "content": "I can't connect to Azure",
             };
         }
     };
 
     return (
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
             style={[styles.container, { paddingBottom: keyboardHeight + 100 }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={120}
@@ -121,7 +108,7 @@ const Chat = () => {
                                 </View>
                             </View>
                         );
-                    // Otherwise, assume it's an 'assistant' message and apply the assistantMessage style
+                        // Otherwise, assume it's an 'assistant' message and apply the assistantMessage style
                     } else if (item.role === 'assistant') {
                         return (
                             <View style={styles.messageContainer}>

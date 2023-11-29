@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   callButton: {
-    backgroundColor: colors.specialButtonColor,
+    backgroundColor: colors.sosButtonColor,
     padding: 8,
     borderRadius: 4,
   },
