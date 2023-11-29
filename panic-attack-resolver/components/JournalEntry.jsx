@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {colors} from '../values/colors'
 
-const JournalEntry = () => {
+const JournalEntry = ({selectedDate}) => {
     const [journalText, setJournalText] = useState('');
     const [journalEntries, setJournalEntries] = useState([]);
+    const formattedSelectedDate = new Date(selectedDate).toISOString().split('T')[0];
 
     const handleChange = (text) => {
       setJournalText(text);
@@ -13,16 +14,45 @@ const JournalEntry = () => {
   
     const handleSave = async () => {
       try {
-        const newEntry = { id: Date.now().toString(), text: journalText };
-        journalEntries.push(newEntry);
-        await AsyncStorage.setItem('journalEntries', JSON.stringify([...journalEntries, newEntry]));
+        const currentDate = new Date().toISOString().split('T')[0];
+        if (formattedSelectedDate != currentDate) {
+          console.log('Cannot create a journal entry for the current date.');
+          return;
+        }
+
+        const newEntry = { id: `${Date.now()}-${Math.random()}`, text: journalText };
+        const entryDate = new Date(parseInt(newEntry.id)).toISOString().split('T')[0];
+
+        const storedEntries = await AsyncStorage.getItem('journalEntries');
+        let entries = storedEntries ? JSON.parse(storedEntries) : {};
+  
+        if (!entries[entryDate]) {
+          entries[entryDate] = [];
+        }
+  
+        entries[entryDate].push(newEntry);
+  
+        await AsyncStorage.setItem('journalEntries', JSON.stringify(entries));
+        setJournalEntries(entries);
+  
         setJournalText('');
-        console.log(JSON.stringify(journalEntries));
+        console.log(JSON.stringify(entries));
+        console.log('Selected Date:', formattedSelectedDate);
+        console.log('entry Date:', entryDate);
       } catch (error) {
         console.error('Error saving journal entry:', error);
       }
     };
 
+    const handleReset = async () => {
+      try {
+        await AsyncStorage.removeItem('journalEntries');
+        setJournalEntries([]);
+      } catch (error) {
+        console.error('Error clearing journal entries:', error);
+      }
+    };
+   
     useEffect (() => {
       const fetchData = async () => {
         try {
@@ -40,7 +70,13 @@ const JournalEntry = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Daily Journal</Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.heading}>Daily Journal</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSave}>
+          <Text style={styles.buttonText}>Save Entry</Text>
+        </TouchableOpacity>
+      </View>
+     
       <TextInput
         multiline
         placeholder="What's going on today?"
@@ -48,26 +84,73 @@ const JournalEntry = () => {
         value={journalText}
         style={styles.textInput}
       />
-      <Button title="Save Entry" color="gray" onPress={handleSave} />
-
-      <Text style={styles.label}>Journal Entry:</Text>
+      
+      <View style={styles.subheaderContainer}>
+        <Text style={styles.label}>Journal Entries:</Text>
+        <TouchableOpacity style={styles.button} onPress={handleReset}>
+          <Text style={styles.buttonText}>Clear All Entries</Text>
+        </TouchableOpacity>
+      </View>
       
       <View>
-        {journalEntries.map (entry => (
+        {journalEntries[formattedSelectedDate]?.map(entry => (
           <View style={styles.entry} key={entry.id}>
             <Text style={styles.entryText}>{entry.text}</Text>
             <Text style={styles.dateText}>
-              {new Date (parseInt (entry.id)).toLocaleDateString ()}
+              {new Date(parseInt(entry.id)).toLocaleTimeString()}
             </Text>
           </View>
         ))}
       </View>
-      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  subheaderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  heading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    paddingTop: 15,
+  },
+  button: {
+    backgroundColor: colors.specialButtonColor, 
+    padding: 10,
+    borderRadius: 5,
+    textAlign: 'right',
+  },
+  buttonText: {
+    color: 'white', 
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  textInput: {
+    height: 250,
+    borderColor: colors.defaultButtonColor,
+    backgroundColor: colors.defaultButtonColor,
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 8,
+  }, 
   entry: {
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
@@ -87,30 +170,6 @@ const styles = StyleSheet.create({
     color: 'gray',
     textAlign: 'right',
   },
-  container: {
-    flex: 1,
-    padding: 16,
-    margin: 'auto',
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  textInput: {
-    height: 250,
-    borderColor: colors.defaultButtonColor,
-    backgroundColor: colors.defaultButtonColor,
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 8,
-  },
 });
 
 export default JournalEntry;
-

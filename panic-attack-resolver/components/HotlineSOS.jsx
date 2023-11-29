@@ -22,6 +22,7 @@ const HotlineSOS = () => {
 
   return (
     <View style={styles.container}>
+
       <ScrollView style={styles.scrollView}>
         <Text style={styles.heading}>Need Someone to Talk To?</Text>
         <Text style={styles.infoText}>
@@ -76,7 +77,6 @@ const styles = StyleSheet.create ({
   container: {
     flex: 1,
     padding: 16,
-    justifyContent: 'center',
   },
   heading: {
     textAlign: 'center',
