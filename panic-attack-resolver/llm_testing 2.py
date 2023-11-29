@@ -74,7 +74,7 @@ import sys
 client = OpenAI()
 
 messages=[
-    {"role": "system", "content": "You are a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. You help people get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack."}
+    {"role": "system", "content": "You are a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. You help people get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. Think about what a user going through a panic attack would be experiencing and make sure your messages take that into account."}
 ]
 
 def get_response(user_input, messages, response_container):
