@@ -73,7 +73,7 @@ const Calendar = () => {
         </View>
         <View style={{flex: 1, paddingHorizontal: 10}}>
         <ScrollView>
-          <JournalEntry/>
+          <JournalEntry selectedDate={value} />
         </ScrollView>
         </View>
       </View>
