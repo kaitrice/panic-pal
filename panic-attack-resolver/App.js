@@ -26,7 +26,7 @@ const App = () => {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'Login':
-        return <Login />
+        return <Login setCurrentScreen={setCurrentScreen} />
       case 'Chat':
         return <Chat />
       case 'Breathing':
@@ -40,7 +40,7 @@ const App = () => {
       case 'Settings':
         return <Settings />
       default:
-        return <Login />
+        return <Login setCurrentScreen={setCurrentScreen} />
     }
   };
 
@@ -50,7 +50,9 @@ const App = () => {
       <View style={styles.middle}>
         {renderScreen()}
       </View>
-      <Footer style={styles.bottom} setCurrentScreen={setCurrentScreen} />
+      {currentScreen !== 'Login' && (
+        <Footer style={styles.bottom} setCurrentScreen={setCurrentScreen} />
+      )}
       <StatusBar style="auto" />
     </View>
   )

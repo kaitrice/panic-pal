@@ -5,10 +5,11 @@ import {
     TextInput,
     View,
     StyleSheet,
+    Alert
 } from 'react-native';
 
 
-import { getAuth, createUserWithEmailAndPassword, deleteUser } from "../values/firebaseConfig";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser } from "../values/firebaseConfig";
 
 import { colors } from '../values/colors'
 
@@ -21,29 +22,40 @@ const registerAccount = (email, password) => {
         .then((userCredential) => {
             // Signed up 
             console.log("registered " + email)
-            const user = userCredential.user;
+            const user = userCredential.user.email;
 
             // ...
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
+            Alert.alert("Error Registering", errorMessage, [
+                {
+                    text: "OK"
+                }
+            ])
             console.log("error register " + errorCode + " " + errorMessage)
             // ..
         });
 }
 
-const loginWithAccount = (email, password) => {
+const loginWithAccount = (email, password, setCurrentScreen) => {
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
-            const user = userCredential.user;
+            const user = userCredential.user.email;
             console.log("logged in " + user)
+            setCurrentScreen("Chat")
             // ...
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
+            Alert.alert("Error Logging In", errorMessage, [
+                {
+                    text: "OK"
+                }
+            ])
             console.log("error login " + errorCode + " " + errorMessage)
         });
 }
@@ -57,7 +69,7 @@ const deleteAccount = () => {
     });
 }
 
-const Login = () => {
+const Login = ({setCurrentScreen}) => {
     const [hasAccount, setHasAccount] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -83,7 +95,7 @@ const Login = () => {
                 />
             </View>
 
-            <TouchableOpacity style={styles.loginBtn} onPress={() => { hasAccount ? loginWithAccount(email, password) : registerAccount(email, password) }}>
+            <TouchableOpacity style={styles.loginBtn} onPress={() => { hasAccount ? loginWithAccount(email, password, setCurrentScreen) : registerAccount(email, password) }}>
                 <Text style={styles.loginText}>{hasAccount ? "LOGIN" : "REGISTER"}</Text>
             </TouchableOpacity>
 
