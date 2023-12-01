@@ -16,6 +16,11 @@ const JournalEntry = ({selectedDate}) => {
       try {
         const currentDate = new Date().toISOString().split('T')[0];
         if (formattedSelectedDate != currentDate) {
+          Alert.alert("Error creating journal entry", "You can only create new journal entries for the current day.", [
+            {
+                text: "OK"
+            }
+        ])
           console.log('Cannot create a journal entry for the current date.');
           return;
         }

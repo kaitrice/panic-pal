@@ -109,7 +109,7 @@ const Breathing = () => {
                 setIsBreatheOutLoading(false)
             }
             else {
-                console.log("set default breathe in")
+                console.log("set default breathe out")
                 setBreatheOutAsync(defaultBreatheOutTime);
                 setIsBreatheOutLoading(false);
             }
@@ -155,7 +155,7 @@ const Breathing = () => {
     
     return (
         <View style={styles.container}>
-            <Text style={{ textAlign: 'center' }}>{text}</Text>
+            <Text style={{ textAlign: 'center'}}>{text}</Text>
             <Animated.View style={{alignItems: "center"}}>
                 <CenteredButton title="Hi" onPress={() => { setIsActive(!isActive); }} circle color={colors.appBackgroundColor} seconds={seconds} size={size}></CenteredButton>
             </Animated.View>
