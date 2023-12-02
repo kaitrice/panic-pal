@@ -54,14 +54,47 @@ const Chat = () => {
 
         setMessages((prevMessages) => [...prevMessages, userMessage]);
         setCurrentInput('');
-
+        startLoadingMessage();
         const botMessage = await getBotResponse([...chatHistory, userMessage]);
+        stopLoadingMessage();
         setMessages((prevMessages) => [...prevMessages, botMessage]);
 
         setTimeout(() => {
             flatListRef.current?.scrollToEnd({ animated: true });
         }, 100);
     };
+
+    let loadingInterval = null;
+
+    const startLoadingMessage = () => {
+        const messages = [".. ", "...", ".  "];
+        let messageIndex = 0;
+    
+        setMessages(prevMessages => [...prevMessages, { role: 'loading', content: '.  ' }]);
+    
+        loadingInterval = setInterval(() => {
+            const newContent = messages[messageIndex];
+            messageIndex = (messageIndex + 1) % messages.length;
+    
+            // Update the content of the loading message in chat history
+            setMessages(prevMessages => {
+                const newMessages = [...prevMessages];
+                const loadingMessageIndex = newMessages.findIndex(m => m.role === 'loading');
+                if (loadingMessageIndex !== -1) {
+                    newMessages[loadingMessageIndex] = { role: 'loading', content: newContent };
+                }
+                return newMessages;
+            });
+        }, 500); // Adjust the interval as needed
+    };
+    
+    const stopLoadingMessage = () => {
+        clearInterval(loadingInterval);
+    
+        // Remove the loading message from chat history
+        setMessages(prevMessages => prevMessages.filter(m => m.role !== 'loading'));
+    };
+
 
     const getBotResponse = async (messages) => {
         console.log(messages);
@@ -110,6 +143,14 @@ const Chat = () => {
                         );
                         // Otherwise, assume it's an 'assistant' message and apply the assistantMessage style
                     } else if (item.role === 'assistant') {
+                        return (
+                            <View style={styles.messageContainer}>
+                                <View style={styles.assistantMessage}>
+                                    <Text>{item.content}</Text>
+                                </View>
+                            </View>
+                        );
+                    } else if (item.role === 'loading') {
                         return (
                             <View style={styles.messageContainer}>
                                 <View style={styles.assistantMessage}>
