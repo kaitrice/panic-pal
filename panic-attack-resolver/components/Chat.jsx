@@ -11,6 +11,7 @@ import {
     Keyboard
 } from 'react-native';
 import axios from 'axios'; // Import axios
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Chat = () => {
     const systemMessage = {
@@ -22,6 +23,25 @@ const Chat = () => {
     const flatListRef = useRef();
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const [inputAreaHeight, setInputAreaHeight] = useState(0);
+
+    const [isChatHistoryLoading, setIsChatHistoryLoading] = useState(true);
+
+    useEffect(() => {
+        AsyncStorage.getItem('chatHistory').then((value) => {
+            const jsonValue = JSON.parse(value);
+            if (jsonValue !== null) {
+                console.log("got history")
+                setMessages(jsonValue)
+                console.log(jsonValue)
+                setIsChatHistoryLoading(false);
+            }
+            else {
+                //console.log("set default chat history")
+                setIsChatHistoryLoading(false);
+            }
+        });
+    }, [])
+
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -46,17 +66,30 @@ const Chat = () => {
         }
     }, [chatHistory]);
 
+    if (isChatHistoryLoading) {
+        //console.log("loading")
+        return <View><Text>Loading...</Text></View>;
+    }
+
     const handleSend = async () => {
         const userMessage = {
             "role": 'user',
             "content": userInput,
         };
 
+        let localHistory = chatHistory;
+
+        localHistory = [...localHistory, userMessage];
         setMessages((prevMessages) => [...prevMessages, userMessage]);
         setCurrentInput('');
 
+
         const botMessage = await getBotResponse([...chatHistory, userMessage]);
+        localHistory = [...localHistory, botMessage];
         setMessages((prevMessages) => [...prevMessages, botMessage]);
+
+
+        saveChatHistory(localHistory);
 
         setTimeout(() => {
             flatListRef.current?.scrollToEnd({ animated: true });
@@ -84,6 +117,16 @@ const Chat = () => {
             };
         }
     };
+
+    async function saveChatHistory(history) {
+        try {
+            console.log("set history to")
+            console.log(JSON.stringify(history))
+            await AsyncStorage.setItem('chatHistory', JSON.stringify(history));
+        } catch (e) {
+            console.log("Error setting chatHistory")
+        }
+    }
 
     return (
         <KeyboardAvoidingView

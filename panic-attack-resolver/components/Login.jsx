@@ -16,7 +16,6 @@ import { colors } from '../values/colors'
 
 const auth = getAuth();
 
-
 const registerAccount = (email, password) => {
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
