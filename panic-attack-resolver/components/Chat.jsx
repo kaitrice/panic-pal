@@ -8,10 +8,12 @@ import {
     StyleSheet,
     KeyboardAvoidingView,
     Platform,
-    Keyboard
+    Keyboard,
+    TouchableOpacity
 } from 'react-native';
 import axios from 'axios'; // Import axios
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { colors } from '../values/colors'
 
 const Chat = () => {
     const systemMessage = {
@@ -61,6 +63,7 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
+        
         if (flatListRef.current) {
             flatListRef.current.scrollToEnd({ animated: true });
         }
@@ -97,7 +100,6 @@ const Chat = () => {
             flatListRef.current?.scrollToEnd({ animated: true });
         }, 100);
     };
-
     let loadingInterval = null;
 
     const startLoadingMessage = () => {
@@ -129,6 +131,9 @@ const Chat = () => {
         setMessages(prevMessages => prevMessages.filter(m => m.role !== 'loading'));
     };
 
+    const handlePress = (prompt) => {
+        console.log(`Button pressed for: ${prompt}`);
+    };
 
     const getBotResponse = async (messages) => {
         console.log(messages);
@@ -136,7 +141,6 @@ const Chat = () => {
             const response = await axios.post(
                 'https://panicpal.azurewebsites.net/api/PanicPal?code=o3_4CaEJP8c1jTBF2CUeUSlnwlj8oDwSrK6jiuG4ZPHnAzFuUUyCIg==',
                 {
-
                     messages: messages,
                 }
             );
@@ -208,22 +212,45 @@ const Chat = () => {
                     }
                 }}
             />
+            {chatHistory && (
+                <View style={styles.promptContainer}>
+                    <TouchableOpacity 
+                        style={styles.promptBtn} 
+                        onPress={() => { }}
+                    >
+                        <Text>Prompt 1</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={styles.promptBtn} 
+                        onPress={() => { }}
+                    >
+                        <Text>Prompt 2</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={styles.promptBtn} 
+                        onPress={() => { }}
+                    >
+                        <Text>Prompt 3</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
             <View style={styles.inputAreaContainer}
                 onLayout={(event) => {
                     const { height } = event.nativeEvent.layout;
                     setInputAreaHeight(height);
                 }}
             >
-                <TextInput
-                    style={styles.input}
-                    value={userInput}
-                    onChangeText={setCurrentInput}
-                    placeholder="Type your message here..."
-                />
-                {/* The Button component in React Native does not accept the style prop.
-                    If you want to style the button, consider using a TouchableOpacity or similar. */}
-                <Button title='Send' onPress={handleSend} />
+            <TextInput
+                style={styles.input}
+                value={userInput}
+                onChangeText={setCurrentInput}
+                placeholder="Type your message here..."
+                placeholderTextColor='#000'
+                underlineColorAndroid='#000'
+            />
+            <Button title='Send' onPress={handleSend} />
             </View>
+
         </KeyboardAvoidingView>
     );
 }
@@ -232,7 +259,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-        width: '100%', // Explicitly set the width to be 100% of the screen
+        width: '100%',
     },
     inputAreaContainer: {
         flexDirection: 'row',
@@ -241,13 +268,19 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         width: '100%',
     },
+    promptContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        marginBottom: 20,
+    },
     input: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: 'grey',
+        backgroundColor: 'lightgrey',
         padding: 10,
         borderRadius: 5,
-        marginRight: 10, // Add space between the input and the send button
+        marginRight: 10,
     },
     messageContainer: {
         flexDirection: 'row',
@@ -256,19 +289,24 @@ const styles = StyleSheet.create({
     },
     userMessage: {
         padding: 10,
-        backgroundColor: '#b3c97b95',
+        backgroundColor: colors.userMessage,
         borderRadius: 10,
         marginBottom: 5,
-        maxWidth: '80%', // Taking up to 80% of the container width
-        // No marginLeft needed since the container itself will fill the screen width
+        maxWidth: '80%', 
     },
     assistantMessage: {
         padding: 10,
-        backgroundColor: '#ffbac995',
+        backgroundColor: colors.assistantMessage,
         borderRadius: 10,
         marginBottom: 5,
-        maxWidth: '80%', // Taking up to 80% of the container width
-        // No marginRight needed for the same reason
+        maxWidth: '80%',
+    },
+    promptBtn: {
+        borderRadius: 25,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: colors.defaultButtonColor,
+        padding: 15
     },
 });
 

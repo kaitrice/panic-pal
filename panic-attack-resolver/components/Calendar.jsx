@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import {StyleSheet, SafeAreaView, View, ScrollView, TouchableWithoutFeedback, Text, Dimensions} from 'react-native';
+import {StyleSheet, SafeAreaView, View, ScrollView, TouchableWithoutFeedback, Text, Dimensions, useColorScheme} from 'react-native';
 import moment from 'moment';
 import Swiper from 'react-native-swiper';
 import JournalEntry from "./JournalEntry";
@@ -11,6 +11,7 @@ const Calendar = () => {
   const swiper = useRef ();
   const [value, setValue] = useState (new Date ());
   const [week, setWeek] = useState (0);
+  const theme = useColorScheme();
 
   // Generate the weeks array based on the current week
   const weeks = React.useMemo ( () => {
@@ -119,7 +120,7 @@ const styles = StyleSheet.create ({
   itemDate: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#111',
+    color: 'grey',
   },
 });
 export default Calendar;
