@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {colors} from '../values/colors'
 
@@ -7,6 +7,7 @@ const JournalEntry = ({selectedDate}) => {
     const [journalText, setJournalText] = useState('');
     const [journalEntries, setJournalEntries] = useState([]);
     const formattedSelectedDate = new Date(selectedDate).toISOString().split('T')[0];
+    const theme = useColorScheme();
 
     const handleChange = (text) => {
       setJournalText(text);
@@ -71,7 +72,7 @@ const JournalEntry = ({selectedDate}) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.heading}>Daily Journal</Text>
+        <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.heading]}>Daily Journal</Text>
         <TouchableOpacity style={styles.button} onPress={handleSave}>
           <Text style={styles.buttonText}>Save Entry</Text>
         </TouchableOpacity>
@@ -86,9 +87,9 @@ const JournalEntry = ({selectedDate}) => {
       />
       
       <View style={styles.subheaderContainer}>
-        <Text style={styles.label}>Journal Entries:</Text>
+        <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.label]}>Journal Entries:</Text>
         <TouchableOpacity style={styles.button} onPress={handleReset}>
-          <Text style={styles.buttonText}>Clear All Entries</Text>
+          <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.buttonText]}>Clear All Entries</Text>
         </TouchableOpacity>
       </View>
       
@@ -169,6 +170,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: 'gray',
     textAlign: 'right',
+  },
+  lightTheme: {
+    // backgroundColor: colors.appBackgroundColor,
+    color: colors.darkBackgroundColor
+  },
+  darkTheme: {
+    // backgroundColor: colors.darkBackgroundColor,
+    color: colors.appBackgroundColor,
   },
 });
 

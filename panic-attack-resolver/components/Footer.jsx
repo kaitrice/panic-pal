@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: colors.appBackgroundColor,
     },
 });
 

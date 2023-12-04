@@ -6,11 +6,14 @@ import {
   TouchableOpacity,
   Linking,
   ScrollView,
+  useColorScheme,
 } from 'react-native';
 import {colors} from '../values/colors'
 
 const HotlineSOS = () => {
   const [showHotlineOptions, setShowHotlineOptions] = useState (false);
+  const theme = useColorScheme();
+
 
   const toggleHotlineOptions = () => {
     setShowHotlineOptions (!showHotlineOptions);
@@ -23,13 +26,12 @@ const HotlineSOS = () => {
   const handleTextHotline = (number, message) => {
     Linking.openURL(`sms:${number}${Platform.OS === "ios" ? "&" : "?"}body=${message}`);
   };
-
   return (
     <View style={styles.container}>
 
       <ScrollView style={styles.scrollView}>
-        <Text style={styles.heading}>Need Someone to Talk To?</Text>
-        <Text style={styles.infoText}>
+        <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.heading]}>Need Someone to Talk To?</Text>
+        <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.infoText]}>
           If you're feeling overwhelmed and need someone to talk to, we're here
           for you. Would you like to call a hotline?
         </Text>
@@ -87,12 +89,10 @@ const styles = StyleSheet.create ({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: '#333',
   },
   infoText: {
     fontSize: 16,
     marginBottom: 16,
-    color: '#555',
     textAlign: 'center',
   },
   toggleButton: {
@@ -117,6 +117,15 @@ const styles = StyleSheet.create ({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  lightTheme: {
+    // backgroundColor: colors.appBackgroundColor,
+    color: colors.darkBackgroundColor,
+  },
+  darkTheme: {
+    // backgroundColor: colors.darkBackgroundColor,
+    color: colors.appBackgroundColor,
+  },
+
 });
 
 export default HotlineSOS;

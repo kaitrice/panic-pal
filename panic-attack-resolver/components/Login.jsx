@@ -80,7 +80,8 @@ const Login = ({setCurrentScreen}) => {
                 <TextInput
                     style={styles.TextInput}
                     placeholder="Email"
-                    placeholderTextColor="#003f5c"
+                    placeholderTextColor='#000'
+                    underlineColorAndroid='#000'
                     onChangeText={(email) => setEmail(email)}
                 />
             </View>
@@ -90,13 +91,14 @@ const Login = ({setCurrentScreen}) => {
                     secureTextEntry={true}
                     style={styles.TextInput}
                     placeholder="Password"
-                    placeholderTextColor="#003f5c"
+                    placeholderTextColor='#000'
+                    underlineColorAndroid='#000'
                     onChangeText={(password) => setPassword(password)}
                 />
             </View>
 
             <TouchableOpacity style={styles.loginBtn} onPress={() => { hasAccount ? loginWithAccount(email, password, setCurrentScreen) : registerAccount(email, password) }}>
-                <Text style={styles.loginText}>{hasAccount ? "LOGIN" : "REGISTER"}</Text>
+                <Text style={styles.loginText}>{hasAccount ? "Login" : "Register"}</Text>
             </TouchableOpacity>
 
 
@@ -106,7 +108,7 @@ const Login = ({setCurrentScreen}) => {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.deleteBtn} onPress={() => { deleteAccount() }}>
-                <Text style={styles.loginText}>DELETE ACCOUNT</Text>
+                <Text style={styles.loginText}>Delete Account</Text>
             </TouchableOpacity>
         </View>
     );
@@ -116,7 +118,6 @@ const Login = ({setCurrentScreen}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.appBackgroundColor,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -150,6 +151,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginBottom: 40,
         backgroundColor: colors.loginButtonColor,
+    },
+    loginText: {
+        fontWeight: "bold",
+        color: 'white',
+        textAlign: "center",
     },
     deleteBtn: {
         width: "80%",

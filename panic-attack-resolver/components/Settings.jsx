@@ -2,9 +2,11 @@ import Slider from "react-native-a11y-slider";
 import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
+    Switch,
     Text,
     TouchableOpacity,
     View,
+    useColorScheme,
 } from 'react-native';
 import DragList from 'react-native-draglist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,6 +22,10 @@ export default function Draggable(sliderValue) {
     const [isInterventionsLoading, setisInterventionsLoading] = useState(true)
     const [isVolumeLoading, setisVolumeLoading] = useState(true)
     const [volume, setVolume] = useState(defaultVolume);
+    const theme = useColorScheme();
+    const [isEnabled, setIsEnabled] = useState(theme === 'dark');
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
     //AsyncStorage.removeItem('volume'); //use this to test the default volume being put into storage correctly
     //AsyncStorage.removeItem('interventions'); //use this to test the default interventions being put into storage correctly
     useEffect(() => {
@@ -47,6 +53,10 @@ export default function Draggable(sliderValue) {
         });
     }, [])
 
+    useEffect(() => {
+        setIsEnabled(theme === 'dark');
+    }, [theme]);
+
     if (isVolumeLoading || isInterventionsLoading) {
         //console.log("loading")
         return <View><Text>Loading...</Text></View>;
@@ -66,8 +76,8 @@ export default function Draggable(sliderValue) {
                 onPressIn={onDragStart}
                 onPressOut={onDragEnd}>
                 <View style={styles.rowContainer}>
-                    <Text style={styles.text}>{item}</Text>
-                    <Text style={styles.index}>{data.indexOf(item) + 1}</Text>
+                    <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.text]}>{item}</Text>
+                    <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.index]}>{data.indexOf(item) + 1}</Text>
                 </View>
 
             </TouchableOpacity>
@@ -102,24 +112,42 @@ export default function Draggable(sliderValue) {
         }
     }
 
+    async function setIsEnabledAsync() {
+        try {
+            //console.log("Set mode to ", value)
+            setIsEnabled(previousState => !previousState);
+            await AsyncStorage.setItem('is enabled', value.toString());
+        } catch (e) {
+            console.log("Error setting is enabled")
+        }
+    }
+
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Interventions</Text>
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.header]}>Interventions</Text>
             <DragList
                 data={data}
                 keyExtractor={keyExtractor}
                 onReordered={onReordered}
                 renderItem={renderItem}
             />
-            <Text style={styles.header}>Volume</Text>
+            {/* <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.header]}>Volume</Text>
             <Slider min={1} max={100}
                 values={[volume]}
                 onChange={(values) => {
                     setVolumeAsync(values[0])
-                }} />
+                }} /> */}
             {/* <>
                 {data.map(info => <Text>{info}</Text>)}
             </> */}
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.header]}>Dark Mode</Text>
+            <Switch
+                trackColor={{ false: '#767577', true: colors.defaultButtonColor }}
+                thumbColor={isEnabled ? colors.loginButtonColor : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleSwitch}
+                value={isEnabled}
+            />
         </View>
     );
 }
@@ -128,7 +156,6 @@ const styles = StyleSheet.create({
     rowContainer: {
         flex: 1,
         flexDirection: 'row',
-        // backgroundColor: 'white',
     },
     container: {
         marginTop: 10,
@@ -167,5 +194,13 @@ const styles = StyleSheet.create({
     },
     scrolledList: {
         height: 200,
+    },
+    lightTheme: {
+        backgroundColor: colors.appBackgroundColor,
+        color: colors.darkBackgroundColor,
+    },
+    darkTheme: {
+        backgroundColor: colors.darkBackgroundColor,
+        color: colors.appBackgroundColor,
     },
 });

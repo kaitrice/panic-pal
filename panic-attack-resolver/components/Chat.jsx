@@ -11,6 +11,8 @@ import {
     Keyboard
 } from 'react-native';
 import axios from 'axios'; // Import axios
+import { colors } from '../values/colors'
+
 
 const Chat = () => {
     const systemMessage = {
@@ -134,9 +136,9 @@ const Chat = () => {
                     value={userInput}
                     onChangeText={setCurrentInput}
                     placeholder="Type your message here..."
+                    placeholderTextColor='#000'
+                    underlineColorAndroid='#000'
                 />
-                {/* The Button component in React Native does not accept the style prop.
-                    If you want to style the button, consider using a TouchableOpacity or similar. */}
                 <Button title='Send' onPress={handleSend} />
             </View>
         </KeyboardAvoidingView>
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-        width: '100%', // Explicitly set the width to be 100% of the screen
+        width: '100%',
     },
     inputAreaContainer: {
         flexDirection: 'row',
@@ -158,11 +160,10 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: 'grey',
+        backgroundColor: 'lightgrey',
         padding: 10,
         borderRadius: 5,
-        marginRight: 10, // Add space between the input and the send button
+        marginRight: 10,
     },
     messageContainer: {
         flexDirection: 'row',
@@ -171,19 +172,17 @@ const styles = StyleSheet.create({
     },
     userMessage: {
         padding: 10,
-        backgroundColor: '#b3c97b95',
+        backgroundColor: colors.userMessage,
         borderRadius: 10,
         marginBottom: 5,
-        maxWidth: '80%', // Taking up to 80% of the container width
-        // No marginLeft needed since the container itself will fill the screen width
+        maxWidth: '80%', 
     },
     assistantMessage: {
         padding: 10,
-        backgroundColor: '#ffbac995',
+        backgroundColor: colors.assistantMessage,
         borderRadius: 10,
         marginBottom: 5,
-        maxWidth: '80%', // Taking up to 80% of the container width
-        // No marginRight needed for the same reason
+        maxWidth: '80%',
     },
 });
 

@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar'
 import {
   StyleSheet,
   View,
+  useColorScheme,
 } from 'react-native'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -22,6 +23,7 @@ import Login from './components/Login'
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('Login');
+  const theme = useColorScheme();
   
   const renderScreen = () => {
     switch (currentScreen) {
@@ -45,14 +47,14 @@ const App = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.container]}>
       <Header style={styles.top} />
       <View style={styles.middle}>
         {renderScreen()}
       </View>
-      {currentScreen !== 'Login' && (
+      {/* {currentScreen !== 'Login' && ( */}
         <Footer style={styles.bottom} setCurrentScreen={setCurrentScreen} />
-      )}
+      {/* )} */}
       <StatusBar style="auto" />
     </View>
   )
@@ -61,9 +63,17 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.appBackgroundColor,
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  lightTheme: {
+    backgroundColor: colors.appBackgroundColor,
+    // color: colors.darkBackgroundColor,
+    color: '#fc8005',
+  },
+  darkTheme: {
+    backgroundColor: colors.darkBackgroundColor,
+    color: colors.appBackgroundColor,
   },
   top: {
     flex: 1,
