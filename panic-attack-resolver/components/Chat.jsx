@@ -8,7 +8,8 @@ import {
     StyleSheet,
     KeyboardAvoidingView,
     Platform,
-    Keyboard
+    Keyboard,
+    TouchableOpacity
 } from 'react-native';
 import axios from 'axios'; // Import axios
 import { colors } from '../values/colors'
@@ -43,6 +44,7 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
+        
         if (flatListRef.current) {
             flatListRef.current.scrollToEnd({ animated: true });
         }
@@ -65,13 +67,16 @@ const Chat = () => {
         }, 100);
     };
 
+    const handlePress = (prompt) => {
+        console.log(`Button pressed for: ${prompt}`);
+    };
+
     const getBotResponse = async (messages) => {
         console.log(messages);
         try {
             const response = await axios.post(
                 'https://panicpal.azurewebsites.net/api/PanicPal?code=o3_4CaEJP8c1jTBF2CUeUSlnwlj8oDwSrK6jiuG4ZPHnAzFuUUyCIg==',
                 {
-
                     messages: messages,
                 }
             );
@@ -125,22 +130,45 @@ const Chat = () => {
                     }
                 }}
             />
+            {chatHistory && (
+                <View style={styles.promptContainer}>
+                    <TouchableOpacity 
+                        style={styles.promptBtn} 
+                        onPress={() => { }}
+                    >
+                        <Text>Prompt 1</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={styles.promptBtn} 
+                        onPress={() => { }}
+                    >
+                        <Text>Prompt 2</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={styles.promptBtn} 
+                        onPress={() => { }}
+                    >
+                        <Text>Prompt 3</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
             <View style={styles.inputAreaContainer}
                 onLayout={(event) => {
                     const { height } = event.nativeEvent.layout;
                     setInputAreaHeight(height);
                 }}
             >
-                <TextInput
-                    style={styles.input}
-                    value={userInput}
-                    onChangeText={setCurrentInput}
-                    placeholder="Type your message here..."
-                    placeholderTextColor='#000'
-                    underlineColorAndroid='#000'
-                />
-                <Button title='Send' onPress={handleSend} />
+            <TextInput
+                style={styles.input}
+                value={userInput}
+                onChangeText={setCurrentInput}
+                placeholder="Type your message here..."
+                placeholderTextColor='#000'
+                underlineColorAndroid='#000'
+            />
+            <Button title='Send' onPress={handleSend} />
             </View>
+
         </KeyboardAvoidingView>
     );
 }
@@ -157,6 +185,13 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: 10,
         width: '100%',
+    },
+    promptContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        marginBottom: 20,
     },
     input: {
         flex: 1,
@@ -183,6 +218,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 5,
         maxWidth: '80%',
+    },
+    promptBtn: {
+        borderRadius: 25,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: colors.defaultButtonColor,
+        padding: 15
     },
 });
 

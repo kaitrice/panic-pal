@@ -96,8 +96,8 @@ const JournalEntry = ({selectedDate}) => {
       <View>
         {journalEntries[formattedSelectedDate]?.map(entry => (
           <View style={styles.entry} key={entry.id}>
-            <Text style={styles.entryText}>{entry.text}</Text>
-            <Text style={styles.dateText}>
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.entryText]}>{entry.text}</Text>
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.dateText]}>
               {new Date(parseInt(entry.id)).toLocaleTimeString()}
             </Text>
           </View>

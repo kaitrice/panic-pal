@@ -10,12 +10,14 @@ import {
 } from 'react-native';
 import DragList from 'react-native-draglist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAuth, deleteUser } from "../values/firebaseConfig";
 
 import { colors } from '../values/colors'
 
 const defaultInterventionOrder = ['Breathing', 'Grounding', 'Reassurance'];
 const defaultVolume = 10;
 
+const auth = getAuth();
 
 export default function Draggable(sliderValue) {
     const [data, setData] = useState(defaultInterventionOrder);
@@ -112,14 +114,13 @@ export default function Draggable(sliderValue) {
         }
     }
 
-    async function setIsEnabledAsync() {
-        try {
-            //console.log("Set mode to ", value)
-            setIsEnabled(previousState => !previousState);
-            await AsyncStorage.setItem('is enabled', value.toString());
-        } catch (e) {
-            console.log("Error setting is enabled")
-        }
+    const deleteAccount = () => {
+        const user = auth.currentUser;
+        deleteUser(user).then(() => {
+            console.log("User deleted")
+        }).catch((error) => {
+            console.log("Error deleting user " + error)
+        });
     }
 
     return (
@@ -148,6 +149,11 @@ export default function Draggable(sliderValue) {
                 onValueChange={toggleSwitch}
                 value={isEnabled}
             />
+            <View style={styles.deleteBtnContainer}>
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => { deleteAccount() }}>
+                    <Text style={styles.loginText}>Delete Account</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -203,4 +209,18 @@ const styles = StyleSheet.create({
         backgroundColor: colors.darkBackgroundColor,
         color: colors.appBackgroundColor,
     },
+    deleteBtn: {
+        width: "80%",
+        borderRadius: 25,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: colors.sosButtonColor,
+    },
+    deleteBtnContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingBottom: 40
+    }
 });

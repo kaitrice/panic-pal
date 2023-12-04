@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser } from "../values/firebaseConfig";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "../values/firebaseConfig";
 
 import { colors } from '../values/colors'
 
@@ -60,15 +60,6 @@ const loginWithAccount = (email, password, setCurrentScreen) => {
         });
 }
 
-const deleteAccount = () => {
-    const user = auth.currentUser;
-    deleteUser(user).then(() => {
-        console.log("User deleted")
-    }).catch((error) => {
-        console.log("Error deleting user " + error)
-    });
-}
-
 const Login = ({setCurrentScreen}) => {
     const [hasAccount, setHasAccount] = useState(true);
     const [email, setEmail] = useState("");
@@ -105,10 +96,6 @@ const Login = ({setCurrentScreen}) => {
 
             <TouchableOpacity style={styles.loginBtn} onPress={() => { setHasAccount(!hasAccount) }}>
                 <Text style={styles.loginText}>{hasAccount ? "Don't have an account yet?" : "Already have an account?"}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.deleteBtn} onPress={() => { deleteAccount() }}>
-                <Text style={styles.loginText}>Delete Account</Text>
             </TouchableOpacity>
         </View>
     );
@@ -156,15 +143,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: 'white',
         textAlign: "center",
-    },
-    deleteBtn: {
-        width: "80%",
-        borderRadius: 25,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: 40,
-        backgroundColor: colors.sosButtonColor,
     },
 });
 
