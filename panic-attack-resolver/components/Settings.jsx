@@ -123,6 +123,15 @@ export default function Draggable(sliderValue) {
         });
     }
 
+    const signOut = () => {
+        const user = auth.currentUser;
+        // signOut(user).then(() => {
+        //     console.log("User deleted")
+        // }).catch((error) => {
+        //     console.log("Error sign out user " + error)
+        // });
+    }
+
     return (
         <View style={styles.container}>
             <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.header]}>Interventions</Text>
@@ -149,9 +158,13 @@ export default function Draggable(sliderValue) {
                 onValueChange={toggleSwitch}
                 value={isEnabled}
             />
-            <View style={styles.deleteBtnContainer}>
-                <TouchableOpacity style={styles.deleteBtn} onPress={() => { deleteAccount() }}>
-                    <Text style={styles.loginText}>Delete Account</Text>
+            <View style={styles.btnContainer}>
+                <TouchableOpacity style={[styles.signOutBtn, styles.btn]} onPress={() => { signOut() }}>
+                    <Text style={styles.btnTxt}>Sign out</Text>
+                </TouchableOpacity>
+    
+                <TouchableOpacity style={[styles.deleteBtn, styles.btn]} onPress={() => { deleteAccount() }}>
+                    <Text style={styles.btnTxt}>Delete Account</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -209,18 +222,28 @@ const styles = StyleSheet.create({
         backgroundColor: colors.darkBackgroundColor,
         color: colors.appBackgroundColor,
     },
-    deleteBtn: {
+    btnContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingBottom: 40
+    },
+    btn: {
         width: "80%",
         borderRadius: 25,
         height: 50,
         alignItems: "center",
         justifyContent: "center",
+    },
+    deleteBtn: {
         backgroundColor: colors.sosButtonColor,
     },
-    deleteBtnContainer: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        paddingBottom: 40
-    }
+    signOutBtn: {
+        backgroundColor: colors.defaultButtonColor,
+        marginBottom: 20,
+    },
+    btnTxt: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
 });

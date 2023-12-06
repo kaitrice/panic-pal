@@ -20,6 +20,7 @@ const Chat = () => {
         "role": 'system',
         "content": "The assistant is a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. The assistant helps the user get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. Keep responses very concise and brief.",
     };
+    const [interventionPrompt, setInterventionPrompt] = useState('');
     const [userInput, setCurrentInput] = useState('');
     const [chatHistory, setMessages] = useState([systemMessage]);
     const flatListRef = useRef();
@@ -69,6 +70,17 @@ const Chat = () => {
         }
     }, [chatHistory]);
 
+    useEffect(() => {
+        AsyncStorage.getItem('interventions').then((value) => {
+            if (value !== null) {
+                setInterventionPrompt(JSON.parse(value));
+            } else {
+                // Handle the case where 'interventions' is not stored
+                setInterventionPrompt(defaultInterventionOrder);
+            }
+        });
+    }, []);
+
     if (isChatHistoryLoading) {
         //console.log("loading")
         return <View><Text>Loading...</Text></View>;
@@ -100,6 +112,12 @@ const Chat = () => {
             flatListRef.current?.scrollToEnd({ animated: true });
         }, 100);
     };
+
+    const sendPrompt = (prompt) => {
+        setCurrentInput(prompt);
+        handleSend();
+    }
+
     let loadingInterval = null;
 
     const startLoadingMessage = () => {
@@ -216,21 +234,21 @@ const Chat = () => {
                 <View style={styles.promptContainer}>
                     <TouchableOpacity 
                         style={styles.promptBtn} 
-                        onPress={() => { }}
+                        onPress={() => { sendPrompt( interventionPrompt[0] ) }}
                     >
-                        <Text>Prompt 1</Text>
+                        <Text>{ interventionPrompt[0] }</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
                         style={styles.promptBtn} 
-                        onPress={() => { }}
+                        onPress={() => { sendPrompt( interventionPrompt[1] ) }}
                     >
-                        <Text>Prompt 2</Text>
+                        <Text>{ interventionPrompt[1] }</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
                         style={styles.promptBtn} 
-                        onPress={() => { }}
+                        onPress={() => { sendPrompt( interventionPrompt[2] ) }}
                     >
-                        <Text>Prompt 3</Text>
+                        <Text>{ interventionPrompt[2] }</Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -248,7 +266,7 @@ const Chat = () => {
                 placeholderTextColor='#000'
                 underlineColorAndroid='#000'
             />
-            <Button title='Send' onPress={handleSend} />
+            <Button disabled={userInput.trim()===""}  title='Send' onPress={handleSend} />
             </View>
 
         </KeyboardAvoidingView>
