@@ -34,21 +34,7 @@ const CustomIconButtonF = ({ iconName, onPress, disabled, circle, color }) => (
     </TouchableOpacity>
 )
 
-const CustomTextButton = ({ text, onPress, disabled, circle, color }) => (
-    <TouchableOpacity
-        onPress={onPress}
-        disabled={disabled}
-        style={[
-            styles.button,
-            circle ? styles.circle : styles.squoval,
-            { backgroundColor: color },
-        ]}
-    >
-        <Text style={styles.buttonText}>{text}</Text>
-    </TouchableOpacity>
-)
-
-const Footer = ({ setCurrentScreen }) => {
+const Footer = ({ setCurrentScreen , currentScreen}) => {
   const handleSOSClick = async () => {
     Alert.alert(
       "Panic Pal would like to access your contacts",
@@ -78,13 +64,40 @@ const Footer = ({ setCurrentScreen }) => {
     );
   };
 
+  const getCurrentScreenColor = (screen)  => {
+    if (screen == 'SOS') {
+      return colors.sosButtonColor;
+    }
+    return currentScreen === screen ? colors.loginButtonColor : colors.defaultButtonColor;
+  }
+
   return (
     <View style={styles.container}>
-        <CustomIconButtonI iconName="ios-home" onPress={() => setCurrentScreen('Chat')} color={colors.defaultButtonColor} />
-        <CustomIconButtonF iconName="circle" onPress={() => setCurrentScreen('Breathing')} color={colors.defaultButtonColor} />
-        <CustomIconButtonF iconName="phone" onPress={() =>  handleSOSClick()} circle color={colors.sosButtonColor} />
-        <CustomIconButtonI iconName="calendar" onPress={() => setCurrentScreen('Calendar')} color={colors.defaultButtonColor} />
-        <CustomIconButtonI iconName="settings" onPress={() => setCurrentScreen('Settings')} color={colors.defaultButtonColor} />
+        <CustomIconButtonI 
+          iconName="ios-home" 
+          onPress={() => setCurrentScreen('Chat')} 
+          color={getCurrentScreenColor('Chat')} 
+        />
+        <CustomIconButtonF 
+          iconName="circle" 
+          onPress={() => setCurrentScreen('Breathing')} 
+          color={getCurrentScreenColor('Breathing')} 
+        />
+        <CustomIconButtonF 
+          iconName="phone" 
+          onPress={() =>  handleSOSClick()} circle 
+          color={getCurrentScreenColor('SOS')} 
+        />
+        <CustomIconButtonI 
+          iconName="calendar" 
+          onPress={() => setCurrentScreen('Calendar')} 
+          color={getCurrentScreenColor('Calendar')} 
+        />
+        <CustomIconButtonI 
+          iconName="settings"
+          onPress={() => setCurrentScreen('Settings')} 
+          color={getCurrentScreenColor('Settings')} 
+        />
     </View>
   );
 };
@@ -92,33 +105,29 @@ const Footer = ({ setCurrentScreen }) => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        justifyContent: 'space-around', // This will distribute space around the buttons equally
-        alignItems: 'center', // This ensures all buttons are aligned in the center vertically
+        justifyContent: 'space-around', 
+        alignItems: 'center', 
         paddingBottom: 20,
     },
     button: {
-        height: 70, // TODO: Adjust height to be dynamic
-        flex: 1, // This allows each button to grow and take an equal amount of space
+        height: 70, 
+        flex: 1, 
         aspectRatio: 1,
         alignItems: 'center',
         justifyContent: 'center',
         margin: 2,
-        padding: 10, // You can adjust padding to ensure text fits well within the button
-        // Removed static width and height from here
+        padding: 10,
     },
     squoval: {
         borderColor: '#332F2E',
         borderRadius: 20,
-        // Adjust padding if necessary, instead of a fixed width and height
     },
     circle: {
-        borderRadius: 35, // This will create a circle if the width and height are equal
-        // Adjust padding if necessary
+        borderRadius: 35, 
     },
     buttonText: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: colors.appBackgroundColor,
     },
 });
 

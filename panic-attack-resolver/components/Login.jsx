@@ -9,13 +9,12 @@ import {
 } from 'react-native';
 
 
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser } from "../values/firebaseConfig";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "../values/firebaseConfig";
 
 import { colors } from '../values/colors'
 
 
 const auth = getAuth();
-
 
 const registerAccount = (email, password) => {
     createUserWithEmailAndPassword(auth, email, password)
@@ -60,15 +59,6 @@ const loginWithAccount = (email, password, setCurrentScreen) => {
         });
 }
 
-const deleteAccount = () => {
-    const user = auth.currentUser;
-    deleteUser(user).then(() => {
-        console.log("User deleted")
-    }).catch((error) => {
-        console.log("Error deleting user " + error)
-    });
-}
-
 const Login = ({setCurrentScreen}) => {
     const [hasAccount, setHasAccount] = useState(true);
     const [email, setEmail] = useState("");
@@ -80,7 +70,8 @@ const Login = ({setCurrentScreen}) => {
                 <TextInput
                     style={styles.TextInput}
                     placeholder="Email"
-                    placeholderTextColor="#003f5c"
+                    placeholderTextColor='#000'
+                    underlineColorAndroid='#000'
                     onChangeText={(email) => setEmail(email)}
                 />
             </View>
@@ -90,23 +81,20 @@ const Login = ({setCurrentScreen}) => {
                     secureTextEntry={true}
                     style={styles.TextInput}
                     placeholder="Password"
-                    placeholderTextColor="#003f5c"
+                    placeholderTextColor='#000'
+                    underlineColorAndroid='#000'
                     onChangeText={(password) => setPassword(password)}
                 />
             </View>
 
             <TouchableOpacity style={styles.loginBtn} onPress={() => { hasAccount ? loginWithAccount(email, password, setCurrentScreen) : registerAccount(email, password) }}>
-                <Text style={styles.loginText}>{hasAccount ? "LOGIN" : "REGISTER"}</Text>
+                <Text style={styles.loginText}>{hasAccount ? "Login" : "Register"}</Text>
             </TouchableOpacity>
 
 
 
             <TouchableOpacity style={styles.loginBtn} onPress={() => { setHasAccount(!hasAccount) }}>
                 <Text style={styles.loginText}>{hasAccount ? "Don't have an account yet?" : "Already have an account?"}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.deleteBtn} onPress={() => { deleteAccount() }}>
-                <Text style={styles.loginText}>DELETE ACCOUNT</Text>
             </TouchableOpacity>
         </View>
     );
@@ -116,7 +104,6 @@ const Login = ({setCurrentScreen}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.appBackgroundColor,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -151,14 +138,10 @@ const styles = StyleSheet.create({
         marginBottom: 40,
         backgroundColor: colors.loginButtonColor,
     },
-    deleteBtn: {
-        width: "80%",
-        borderRadius: 25,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: 40,
-        backgroundColor: colors.sosButtonColor,
+    loginText: {
+        fontWeight: "bold",
+        color: 'white',
+        textAlign: "center",
     },
 });
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Linking, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Linking, ScrollView, useColorScheme } from 'react-native';
 import * as Contacts from 'expo-contacts';
 import { colors } from '../values/colors';
 import HotlineSOS from './HotlineSOS';
@@ -8,6 +8,7 @@ const windowWidth = Dimensions.get('window').width;
 
 const SOS = () => {
   const [contacts, setContacts] = useState([]);
+  const theme = useColorScheme();
 
   useEffect(() => {
     (async () => {
@@ -31,13 +32,13 @@ const SOS = () => {
     <ScrollView style={styles.container}>
       <HotlineSOS />
 
-      <Text style={styles.label}>Contacts:</Text>
+      <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.label]}>Contacts:</Text>
       {contacts.map((item) => (
         <View key={item.id} style={styles.contactItem}>
           
           <View style={styles.contactInfo}>
-            <Text style={styles.contactName}>{item.name}</Text>
-            <Text style={styles.contactNumber}>
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.contactName]}>{item.name}</Text>
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.contactNumber]}>
               {item.phoneNumbers ? item.phoneNumbers[0].number : 'No phone number'}
             </Text>
           </View>
@@ -93,6 +94,15 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  lightTheme: {
+    // backgroundColor: colors.appBackgroundColor,
+    color: colors.darkBackgroundColor,
+  },
+  darkTheme: {
+    // backgroundColor: colors.darkBackgroundColor,
+    color: colors.appBackgroundColor,
+  },
+
 });
 
 export default SOS;

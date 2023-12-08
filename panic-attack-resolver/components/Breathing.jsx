@@ -3,7 +3,8 @@ import {
     Text,
     View,
     TouchableOpacity,
-    StyleSheet
+    StyleSheet,
+    useColorScheme
 } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react';
 import Slider from "react-native-a11y-slider";
@@ -55,6 +56,8 @@ const Breathing = () => {
     const length = Object.keys(states).length;
     const height = useRef(new Animated.Value(1)).current;
     const size = useRef(new Animated.Value(1)).current;
+
+    const theme = useColorScheme();
 
     const growAnimation = () => {
         Animated.timing(size, {
@@ -109,7 +112,7 @@ const Breathing = () => {
                 setIsBreatheOutLoading(false)
             }
             else {
-                console.log("set default breathe in")
+                console.log("set default breathe out")
                 setBreatheOutAsync(defaultBreatheOutTime);
                 setIsBreatheOutLoading(false);
             }
@@ -155,9 +158,15 @@ const Breathing = () => {
     
     return (
         <View style={styles.container}>
-            <Text style={{ textAlign: 'center' }}>{text}</Text>
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme,{ textAlign: 'center' }]}>{text}</Text>
             <Animated.View style={{alignItems: "center"}}>
-                <CenteredButton title="Hi" onPress={() => { setIsActive(!isActive); }} circle color={colors.appBackgroundColor} seconds={seconds} size={size}></CenteredButton>
+                <CenteredButton 
+                    title="Hi" 
+                    onPress={() => { setIsActive(!isActive); }} circle 
+                    color={theme == 'light' ? styles.lightTheme : styles.darkTheme}
+                    seconds={seconds} 
+                    size={size} 
+                />
             </Animated.View>
             <Animated.View
                 style={[
@@ -174,26 +183,28 @@ const Breathing = () => {
                     alignItems: "center",
                     flexDirection: 'row'
                 }}>
-                    <Text>inhale </Text>
+                    <Text style={theme == 'light' ? styles.lightTheme : styles.darkTheme}>inhale </Text>
                     <Slider style={{ width: "55%"}}
                         min={1} max={15}
                         values={[breatheInTime]}
                         onChange={(values) => {
                             setBreatheInAsync(values[0]);
-                        }} />
+                        }} 
+                    />
                 </View>
                 <View style={{
                     justifyContent:"center",
                     alignItems: "center",
                     flexDirection: 'row'
                 }}>
-                    <Text>exhale</Text>
+                    <Text style={theme == 'light' ? styles.lightTheme : styles.darkTheme}>exhale</Text>
                     <Slider style={{ width: "55%"}}
                         min={1} max={15}
                         values={[breatheOutTime]}
                         onChange={(values) => {
                             setBreatheOutAsync(values[0]);
-                        }} />
+                        }} 
+                    />
                 </View>
                 
             </Animated.View>
@@ -205,7 +216,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        // backgroundColor: 'white',
         justifyContent: 'center',
         padding: 10,
         gap: 20
@@ -240,5 +250,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         paddingLeft: 5
     },
+    lightTheme: {
+        // backgroundColor: colors.appBackgroundColor,
+        color: colors.darkBackgroundColor,
+    },
+    darkTheme: {
+        // backgroundColor: colors.darkBackgroundColor,
+        color: colors.appBackgroundColor,
+    },
+    
 })
 export default Breathing
