@@ -1,6 +1,7 @@
 import React, {useState, useRef} from 'react';
 import {StyleSheet, SafeAreaView, View, ScrollView, TouchableWithoutFeedback, Text, Dimensions, useColorScheme} from 'react-native';
 import moment from 'moment';
+import 'moment-timezone';
 import Swiper from 'react-native-swiper';
 import JournalEntry from "./JournalEntry";
 import {colors} from '../values/colors'
@@ -8,6 +9,8 @@ import {colors} from '../values/colors'
 const windowWidth = Dimensions.get ('window').width;
 
 const Calendar = () => {
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   const swiper = useRef ();
   const [value, setValue] = useState (new Date ());
   const [week, setWeek] = useState (0);
@@ -27,10 +30,10 @@ const Calendar = () => {
         };
       });
     });
-  }, [week]);
+  }, [week, userTimezone]);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+<SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <View style={styles.picker}>
           <Swiper
@@ -42,26 +45,26 @@ const Calendar = () => {
               if (ind === 1) {
                 return;
               }
-              setTimeout (() => {
+              setTimeout(() => {
                 const newIndex = ind - 1;
                 const newWeek = week + newIndex;
-                setWeek (newWeek);
-                setValue (moment (value).add (newIndex, 'week').toDate ());
-                swiper.current.scrollTo (1, false);
+                setWeek(newWeek);
+                setValue(moment(value).add(newIndex, 'week').toDate());
+                swiper.current.scrollTo(1, false);
               }, 100);
             }}
           >
-            {weeks.map ((dates, index) => (
+            {weeks.map((dates, index) => (
               <View style={[styles.itemRow]} key={index}>
-                {dates.map ((item, dateIndex) => {
-                  const isActive = value.toDateString () === item.date.toDateString ();
+                {dates.map((item, dateIndex) => {
+                  const isActive = value.toDateString() === item.date.toDateString();
                   return (
-                    <TouchableWithoutFeedback key={dateIndex} onPress={() => setValue (item.date)}>
-                      <View style={[styles.item, isActive && {backgroundColor: colors.specialButtonColor, borderColor: colors.specialButtonColor}]}>
-                        <Text style={[styles.itemWeekday, isActive && {color: '#fff'}]}>
+                    <TouchableWithoutFeedback key={dateIndex} onPress={() => setValue(item.date)}>
+                      <View style={[styles.item, isActive && { backgroundColor: colors.specialButtonColor, borderColor: colors.specialButtonColor }]}>
+                        <Text style={[styles.itemWeekday, isActive && { color: '#fff' }]}>
                           {item.weekday}
                         </Text>
-                        <Text style={[styles.itemDate, isActive && {color: '#fff'}]}>
+                        <Text style={[styles.itemDate, isActive && { color: '#fff' }]}>
                           {item.date.getDate()}
                         </Text>
                       </View>
@@ -72,10 +75,10 @@ const Calendar = () => {
             ))}
           </Swiper>
         </View>
-        <View style={{flex: 1, paddingHorizontal: 10}}>
-        <ScrollView>
-          <JournalEntry selectedDate={value} />
-        </ScrollView>
+        <View style={{ flex: 1, paddingHorizontal: 10 }}>
+          <ScrollView>
+            <JournalEntry selectedDate={value} />
+          </ScrollView>
         </View>
       </View>
     </SafeAreaView>

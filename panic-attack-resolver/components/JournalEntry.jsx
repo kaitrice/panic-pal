@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Alert, View, Text, TextInput, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {colors} from '../values/colors'
+import moment from 'moment';
+import 'moment-timezone';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const JournalEntry = ({selectedDate}) => {
     const [journalText, setJournalText] = useState('');
     const [journalEntries, setJournalEntries] = useState([]);
-    const formattedSelectedDate = new Date(selectedDate).toISOString().split('T')[0];
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const formattedSelectedDate = moment(selectedDate).tz(userTimezone).format('YYYY-MM-DD');
     const theme = useColorScheme();
 
     const handleChange = (text) => {
@@ -15,7 +19,7 @@ const JournalEntry = ({selectedDate}) => {
   
     const handleSave = async () => {
       try {
-        const currentDate = new Date().toISOString().split('T')[0];
+        const currentDate = moment().tz(userTimezone).format('YYYY-MM-DD');
         if (formattedSelectedDate != currentDate) {
           Alert.alert("Error creating journal entry", "You can only create new journal entries for the current day.", [
             {
@@ -27,7 +31,7 @@ const JournalEntry = ({selectedDate}) => {
         }
 
         const newEntry = { id: `${Date.now()}-${Math.random()}`, text: journalText };
-        const entryDate = new Date(parseInt(newEntry.id)).toISOString().split('T')[0];
+        const entryDate = moment(new Date(parseInt(newEntry.id))).tz(userTimezone).format('YYYY-MM-DD');
 
         const storedEntries = await AsyncStorage.getItem('journalEntries');
         let entries = storedEntries ? JSON.parse(storedEntries) : {};
@@ -50,12 +54,17 @@ const JournalEntry = ({selectedDate}) => {
       }
     };
 
-    const handleReset = async () => {
+    const handleDelete = async (entryId) => {
       try {
-        await AsyncStorage.removeItem('journalEntries');
-        setJournalEntries([]);
+        const storedEntries = await AsyncStorage.getItem('journalEntries');
+        let entries = storedEntries ? JSON.parse(storedEntries) : {};
+  
+        entries[formattedSelectedDate] = entries[formattedSelectedDate].filter(entry => entry.id !== entryId);
+  
+        await AsyncStorage.setItem('journalEntries', JSON.stringify(entries));
+        setJournalEntries(entries);
       } catch (error) {
-        console.error('Error clearing journal entries:', error);
+        console.error('Error deleting journal entry:', error);
       }
     };
    
@@ -93,18 +102,22 @@ const JournalEntry = ({selectedDate}) => {
       
       <View style={styles.subheaderContainer}>
         <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.label]}>Journal Entries:</Text>
-        <TouchableOpacity style={styles.button} onPress={handleReset}>
-          <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.buttonText]}>Clear All Entries</Text>
-        </TouchableOpacity>
       </View>
       
       <View>
         {journalEntries[formattedSelectedDate]?.map(entry => (
           <View style={styles.entry} key={entry.id}>
-            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.entryText]}>{entry.text}</Text>
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.entryText]}>
+              {entry.text}
+            </Text>
+            <View style={styles.entryDetails}>
             <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.dateText]}>
               {new Date(parseInt(entry.id)).toLocaleTimeString()}
             </Text>
+            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(entry.id)} >
+              <Ionicons name='trash-outline' size={20} style= {[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.buttonText]}/>
+            </TouchableOpacity>
+            </View>
           </View>
         ))}
       </View>
@@ -160,13 +173,12 @@ const styles = StyleSheet.create({
   entry: {
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    borderTopColor: '#ccc',
     marginBottom: 10,
     padding: 10,
     borderTopWidth: 1,
-    borderTopColor: '#ccc',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    justifyContent: 'space-between', 
   },
   entryText: {
     fontSize: 16,
@@ -174,7 +186,18 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 11,
     color: 'gray',
-    textAlign: 'right',
+    marginBottom: 4,
+  },
+  entryDetails: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  deleteButton: {
+    marginLeft: 10,
+    backgroundColor: colors.specialButtonColor, 
+    padding: 5,
+    borderRadius: 5,
   },
   lightTheme: {
     // backgroundColor: colors.appBackgroundColor,
