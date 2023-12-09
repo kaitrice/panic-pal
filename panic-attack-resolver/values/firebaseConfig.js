@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser, initializeAuth, getReactNativePersistence} from "firebase/auth";
+import {getAuth, sendPasswordResetEmail, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser, initializeAuth, getReactNativePersistence} from "firebase/auth";
 
 
 
@@ -20,5 +20,5 @@ initializeAuth(app, {
     persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
-export {app, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser}
+export {app, getAuth, sendPasswordResetEmail, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser}
 export const { getDatabase, ref, child, get, set, push } = require('@firebase/database');

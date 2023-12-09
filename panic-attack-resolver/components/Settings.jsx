@@ -1,6 +1,7 @@
 import Slider from "react-native-a11y-slider";
 import React, { useState, useEffect } from 'react';
 import {
+    Alert,
     StyleSheet,
     Switch,
     Text,
@@ -10,7 +11,7 @@ import {
 } from 'react-native';
 import DragList from 'react-native-draglist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAuth, deleteUser } from "../values/firebaseConfig";
+import { signOut, getAuth, deleteUser } from "../values/firebaseConfig";
 
 import { colors } from '../values/colors'
 
@@ -19,7 +20,7 @@ const defaultVolume = 10;
 
 const auth = getAuth();
 
-export default function Draggable(sliderValue) {
+export default function Settings({setCurrentScreen}) {
     const [data, setData] = useState(defaultInterventionOrder);
     const [isInterventionsLoading, setisInterventionsLoading] = useState(true)
     const [isVolumeLoading, setisVolumeLoading] = useState(true)
@@ -115,21 +116,54 @@ export default function Draggable(sliderValue) {
     }
 
     const deleteAccount = () => {
-        const user = auth.currentUser;
-        deleteUser(user).then(() => {
-            console.log("User deleted")
-        }).catch((error) => {
-            console.log("Error deleting user " + error)
-        });
+        Alert.alert(
+            "Do you want to delete this account?",
+            "You cannot undo this action.",
+            [
+                {
+                    text: "Cancel",
+                },
+                {
+                    text: "Delete",
+                    onPress: () => {
+                        const user = auth.currentUser;
+                        deleteUser(user).then(() => {
+                            console.log("User deleted")
+                        }).catch((error) => {
+                            console.log("Error deleting user " + error)
+                        });
+                        setCurrentScreen('Login');
+                    },
+                    style: 'destructive'
+                },
+            ]
+        );
+
     }
 
-    const signOut = () => {
-        const user = auth.currentUser;
-        // signOut(user).then(() => {
-        //     console.log("User deleted")
-        // }).catch((error) => {
-        //     console.log("Error sign out user " + error)
-        // });
+    const signOutUser = () => {
+        Alert.alert(
+            "Do you want to log out?",
+            "You can always log back in.",
+            [
+                {
+                    text: "Cancel",
+                },
+                {
+                    text: "Sign out",
+                    onPress: () => {
+                        const auth = getAuth();
+                        signOut(auth).then(() => {
+                            console.log("User logged out")
+                        }).catch((error) => {
+                            console.log(error);
+                        })
+                        setCurrentScreen('Login');
+                    },
+                },
+            ]
+        );
+
     }
 
     return (
@@ -159,10 +193,10 @@ export default function Draggable(sliderValue) {
                 value={isEnabled}
             />
             <View style={styles.btnContainer}>
-                <TouchableOpacity style={[styles.signOutBtn, styles.btn]} onPress={() => { signOut() }}>
+                <TouchableOpacity style={[styles.signOutBtn, styles.btn]} onPress={() => { signOutUser() }}>
                     <Text style={styles.btnTxt}>Sign out</Text>
                 </TouchableOpacity>
-    
+
                 <TouchableOpacity style={[styles.deleteBtn, styles.btn]} onPress={() => { deleteAccount() }}>
                     <Text style={styles.btnTxt}>Delete Account</Text>
                 </TouchableOpacity>
