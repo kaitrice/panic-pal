@@ -10,7 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "../values/firebaseConfig";
+import { getAuth, sendPasswordResetEmail, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "../values/firebaseConfig";
 
 import { colors } from '../values/colors'
 
@@ -60,32 +60,45 @@ const loginWithAccount = (email, password, setCurrentScreen) => {
         });
 }
 
-const Login = ({setCurrentScreen}) => {
+const Login = ({ setCurrentScreen }) => {
     const [hasAccount, setHasAccount] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false);
-   
+
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
-    
+
     const toggleForgotPassword = () => {
-        setForgotPasswordVisible(!forgotPasswordVisible);
-        // add forgot password logic
-      };
-      
+        // setForgotPasswordVisible(!forgotPasswordVisible);
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                console.log("Password reset email sent")
+                Alert.alert("Password reset email sent to " + email, "If you don't see it, check your junk folder.", [
+                    {
+                        text: "OK"
+                    }
+                ])
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // ..
+            });
+    };
+
     return (
 
         <View style={styles.container}>
             <View style={styles.borderContainer}>
-            
-            
-                    <Text style={styles.signupLoginText}>
-                        {hasAccount ? "LOGIN" : "SIGN UP"}
-                    </Text>
-                    <Text style={styles.textDetails}>
+
+
+                <Text style={styles.signupLoginText}>
+                    {hasAccount ? "LOGIN" : "SIGN UP"}
+                </Text>
+                <Text style={styles.textDetails}>
                     {"\n"}
                     Email
                 </Text>
@@ -98,7 +111,7 @@ const Login = ({setCurrentScreen}) => {
                         onChangeText={(email) => setEmail(email)}
                     />
                 </View>
-            
+
                 <Text style={styles.textDetails}>
                     Password
                 </Text>
@@ -128,7 +141,7 @@ const Login = ({setCurrentScreen}) => {
                 <TouchableOpacity style={styles.userButtonContainer} onPress={() => { setHasAccount(!hasAccount) }}>
                     <Text style={styles.userButtonText}>{hasAccount ? "Need an account? SIGN UP" : "Already a User? LOGIN"}</Text>
                 </TouchableOpacity>
-             </View> 
+            </View>
         </View>
     );
 }
@@ -137,14 +150,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
-        padding: 20,  
+        padding: 20,
         width: 330,
     },
     borderContainer: {
         borderRadius: 8,
         borderWidth: 1,
         borderColor: '#ccc',
-        backgroundColor: 'white', 
+        backgroundColor: 'white',
         padding: 40,
     },
     showPasswordButton: {
@@ -152,13 +165,13 @@ const styles = StyleSheet.create({
         right: 5,
         top: 7,
     },
-    sep:{
+    sep: {
         borderBottomColor: '#ccc',
         borderBottomWidth: StyleSheet.hairlineWidth,
         marginBottom: 40,
     },
     signupLoginText: {
-        color: colors.loginButtonColor, 
+        color: colors.loginButtonColor,
         fontSize: 25,
         fontWeight: "bold",
     },

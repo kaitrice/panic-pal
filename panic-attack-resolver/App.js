@@ -40,7 +40,7 @@ const App = () => {
       case 'Calendar':
         return <Calendar />
       case 'Settings':
-        return <Settings />
+        return <Settings setCurrentScreen={setCurrentScreen} />
       default:
         return <Login setCurrentScreen={setCurrentScreen} />
     }
@@ -52,9 +52,9 @@ const App = () => {
       <View style={styles.middle}>
         {renderScreen()}
       </View>
-      {/* {currentScreen !== 'Login' && ( */}
+      {currentScreen !== 'Login' && (
         <Footer style={styles.bottom} setCurrentScreen={setCurrentScreen} currentScreen={currentScreen} />
-      {/* )} */}
+      )}
       <StatusBar style="auto" />
     </View>
   )

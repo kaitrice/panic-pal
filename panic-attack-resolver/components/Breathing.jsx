@@ -35,7 +35,7 @@ const CenteredButton = ({ title, onPress, disabled, circle, color, seconds, size
     </TouchableOpacity>
 )
 
-const Breathing = () => {    
+const Breathing = () => {
     const [isActive, setIsActive] = useState(false);
     const [state, setState] = useState(0);
     const [seconds, setSeconds] = useState(startTime);
@@ -155,17 +155,17 @@ const Breathing = () => {
         //console.log("loading")
         return <View><Text>Loading...</Text></View>;
     }
-    
+
     return (
         <View style={styles.container}>
-            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme,{ textAlign: 'center' }]}>{text}</Text>
-            <Animated.View style={{alignItems: "center"}}>
-                <CenteredButton 
-                    title="Hi" 
-                    onPress={() => { setIsActive(!isActive); }} circle 
+            <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, { textAlign: 'center' }]}>{text}</Text>
+            <Animated.View style={{ alignItems: "center" }}>
+                <CenteredButton
+                    title="Hi"
+                    onPress={() => { setIsActive(!isActive); }} circle
                     color={theme == 'light' ? styles.lightTheme : styles.darkTheme}
-                    seconds={seconds} 
-                    size={size} 
+                    seconds={seconds}
+                    size={size}
                 />
             </Animated.View>
             <Animated.View
@@ -179,34 +179,58 @@ const Breathing = () => {
 
                 } pointerEvents={isActive ? 'none' : 'auto'}>
                 <View style={{
-                    justifyContent:"center",
+                    justifyContent: "center",
                     alignItems: "center",
                     flexDirection: 'row'
                 }}>
                     <Text style={theme == 'light' ? styles.lightTheme : styles.darkTheme}>inhale </Text>
-                    <Slider style={{ width: "55%"}}
+                    <Slider style={{ width: "55%" }}
+                        markerColor={theme == 'light' ? "#333333" : "white"}
+                        labelStyle={theme == 'light' ? {
+                            
+                        } : {
+                            backgroundColor: colors.darkBackgroundColor,
+                            //borderColor: "red"
+                        }}
+                        labelTextStyle={theme == 'light' ? {
+                            
+                        } : {
+                            color: "white"
+                        }}
                         min={1} max={15}
                         values={[breatheInTime]}
                         onChange={(values) => {
                             setBreatheInAsync(values[0]);
-                        }} 
+                        }}
                     />
                 </View>
                 <View style={{
-                    justifyContent:"center",
+                    justifyContent: "center",
                     alignItems: "center",
                     flexDirection: 'row'
                 }}>
                     <Text style={theme == 'light' ? styles.lightTheme : styles.darkTheme}>exhale</Text>
-                    <Slider style={{ width: "55%"}}
+                    <Slider style={{ width: "55%" }}
+                        markerColor={theme == 'light' ? "#333333" : "white"}
+                        labelStyle={theme == 'light' ? {
+                            
+                        } : {
+                            backgroundColor: colors.darkBackgroundColor,
+                            //borderColor: "red"
+                        }}
+                        labelTextStyle={theme == 'light' ? {
+                            
+                        } : {
+                            color: "white"
+                        }}
                         min={1} max={15}
                         values={[breatheOutTime]}
                         onChange={(values) => {
                             setBreatheOutAsync(values[0]);
-                        }} 
+                        }}
                     />
                 </View>
-                
+
             </Animated.View>
         </View>
     );
@@ -258,6 +282,6 @@ const styles = StyleSheet.create({
         // backgroundColor: colors.darkBackgroundColor,
         color: colors.appBackgroundColor,
     },
-    
+
 })
 export default Breathing
