@@ -102,7 +102,7 @@ const Login = ({setCurrentScreen}) => {
     <View style={styles.container}>
       <View style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.borderContainer]}>
         
-        <Text style={[theme == 'light' ? styles.lightTheme.signupLoginText : styles.darkTheme.signupLoginText, styles.signupLoginText]}>
+        <Text style={[styles.signupLoginText, theme == 'light' ? styles.signupLoginTextLight : styles.signupLoginTextDark]}>
           {hasAccount ? 'LOGIN' : 'SIGN UP'}
         </Text>
         <Text style={[theme == "light" ? styles.lightTheme : styles.darkTheme]}>
@@ -111,7 +111,7 @@ const Login = ({setCurrentScreen}) => {
         </Text>
         <View style={styles.inputView}>
           <TextInput
-            style={[theme == "light" ? styles.lightTheme : styles.darkTheme, styles.textInput]}
+            style={[styles.textInput, theme == "light" ? styles.lightTheme : styles.darkTheme]}
             // placeholder="Email"
             // placeholderTextColor='#000'
             // underlineColorAndroid='#000'
@@ -124,7 +124,7 @@ const Login = ({setCurrentScreen}) => {
         <View style={styles.inputView}>
           <TextInput
             secureTextEntry={!showPassword}
-            style={[theme == "light" ? styles.lightTheme : styles.darkTheme, styles.textInput]}
+            style={[styles.textInput, theme == "light" ? styles.lightTheme : styles.darkTheme]}
             // placeholder="Password"
             // placeholderTextColor='#000'
             // underlineColorAndroid='#000'
@@ -136,15 +136,15 @@ const Login = ({setCurrentScreen}) => {
 
           {hasAccount &&
             <TouchableOpacity onPress={toggleForgotPassword} style={styles.forgotBtnContainer}>
-              <Text style={[theme == "light" ? styles.lightTheme : styles.darkTheme, styles.forgotBtn]}>
+              <Text style={[styles.forgotBtn, theme == "light" ? styles.lightTheme : styles.darkTheme]}>
               
               
               forgot password?</Text>
             </TouchableOpacity>}
         </View>
 
-        <TouchableOpacity style={[theme == "light" ? styles.lightTheme.loginBtnContainer : styles.darkTheme.loginBtnContainer, styles.loginBtnContainer]}  onPress={() => {hasAccount ? loginWithAccount (email, password, setCurrentScreen) : registerAccount (email, password);}}>
-          <Text style={[theme == "light" ? styles.lightTheme.loginBtnText : styles.darkTheme.loginBtnText, styles.loginBtnText]}>
+        <TouchableOpacity style={[styles.loginBtnContainer, theme == "light" ? styles.loginBtnContainerLight : styles.loginBtnContainerDark]}  onPress={() => {hasAccount ? loginWithAccount (email, password, setCurrentScreen) : registerAccount (email, password);}}>
+          <Text style={[styles.loginBtnText, theme == "light" ? styles.loginBtnTextLight : styles.loginBtnTextDark]}>
             {hasAccount ? 'Login' : 'Register'}
           </Text>
         </TouchableOpacity>
@@ -247,34 +247,34 @@ const styles = StyleSheet.create ({
     width: 350,
     height: 150,
   },
+
   lightTheme: {
     backgroundColor: 'white',
-    
-    loginBtnContainer: {
-        borderColor: colors.loginButtonColor,
-        backgroundColor: colors.loginButtonColor,
-    },
-    loginBtnText: {
-        backgroundColor: colors.loginButtonColor,
-    },
-    signupLoginText: {
-        color: colors.loginButtonColor,
-    },
   },
+  loginBtnContainerLight: {
+    borderColor: colors.loginButtonColor,
+    backgroundColor: colors.loginButtonColor,
+  },
+  loginBtnTextLight: {
+    backgroundColor: colors.loginButtonColor,
+  },
+  signupLoginTextLight: {
+    color: colors.loginButtonColor,
+  },
+  
   darkTheme: {
     backgroundColor: '#212020',
     color: colors.appBackgroundColor,
-
-    loginBtnContainer: {
-        borderColor: colors.darkLoginButtonColor,
-        backgroundColor: colors.darkLoginButtonColor, 
-      },
-    loginBtnText: {
-        backgroundColor: colors.darkLoginButtonColor,
-    },
-    signupLoginText: {
-        color: colors.darkLoginButtonColor,
-    },
+  },
+  loginBtnContainerDark: {
+    borderColor: colors.darkLoginButtonColor,
+    backgroundColor: colors.darkLoginButtonColor,
+  },
+  loginBtnTextDark: {
+    backgroundColor: colors.darkLoginButtonColor,
+  },
+  signupLoginTextDark: {
+    color: colors.darkLoginButtonColor,
   },
 });
 
