@@ -14,6 +14,7 @@ import {
 import axios from 'axios'; // Import axios
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../values/colors'
+AsyncStorage.removeItem('interventions');
 
 const Chat = () => {
     const systemMessage = {
@@ -75,11 +76,22 @@ const Chat = () => {
             if (value !== null) {
                 setInterventionPrompt(JSON.parse(value));
             } else {
-                // Handle the case where 'interventions' is not stored
-                setInterventionPrompt(defaultInterventionOrder);
+                // Handle the case where 'interventions' not stored
+                const defaultInterventions = ['Grounding', 'Breathing', 'Reassurance'];
+                setDataAsync(defaultInterventions);
             }
-        });
+        })
     }, []);
+
+    async function setDataAsync(value) {
+        AsyncStorage.setItem('interventions', JSON.stringify(value))
+        .then(() => {
+            setInterventionPrompt(value);
+        })
+        .catch((e) => {
+            console.error("Error setting interventions:", e);
+        });
+    }
 
     if (isChatHistoryLoading) {
         //console.log("loading")
