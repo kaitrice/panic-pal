@@ -14,7 +14,6 @@ import {
 import axios from 'axios'; // Import axios
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../values/colors'
-AsyncStorage.removeItem('interventions');
 
 const Chat = () => {
     const systemMessage = {
