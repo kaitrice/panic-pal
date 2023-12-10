@@ -4,6 +4,7 @@ export const colors = {
 
     // Dark Mode
     darkBackgroundColor: '#2a2a2b',
+    darkLoginButtonColor: '#a7c754',
 
     // App Colors
     defaultButtonColor: '#b3c97b',
