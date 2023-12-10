@@ -38,6 +38,8 @@ const Chat = () => {
     const [isChatHistoryLoading, setIsChatHistoryLoading] = useState(true);
     const [isPrePromptLoading, setIsPrePromptLoading] = useState(true);
 
+    const[waitingOnBotResponse, setWaitingOnBotResponse] = useState(false);
+
     useEffect(() => {
         AsyncStorage.getItem('chatHistory').then((value) => {
             const jsonValue = JSON.parse(value);
@@ -86,6 +88,11 @@ const Chat = () => {
             if (snapshot.exists()) {
                 console.log("snapshot exists");
                 console.log(snapshot.key + snapshot.val())
+                const newPrePrompt = {
+                    "role": 'system',
+                    "content": snapshot.val(),
+                };
+                setCustomPrePrompt(newPrePrompt);
                 setIsPrePromptLoading(false);
             }
             else {
@@ -159,6 +166,8 @@ const Chat = () => {
         localHistory = [...localHistory, userMessage];
         setMessages((prevMessages) => [...prevMessages, userMessage]);
         setCurrentInput('');
+
+        setWaitingOnBotResponse(true);
         startLoadingMessage();
 
 
@@ -166,6 +175,7 @@ const Chat = () => {
         AsyncStorage.setItem('lastMessageTime', Date.now().toString()).catch((e) => {
             console.error("Error setting message time:", e);
         })
+        setWaitingOnBotResponse(false);
         stopLoadingMessage();
         localHistory = [...localHistory, botMessage];
         setMessages((prevMessages) => [...prevMessages, botMessage]);
@@ -251,7 +261,7 @@ const Chat = () => {
             const response = await axios.post(
                 'https://panicpal.azurewebsites.net/api/PanicPal?code=o3_4CaEJP8c1jTBF2CUeUSlnwlj8oDwSrK6jiuG4ZPHnAzFuUUyCIg==',
                 {
-                    messages: [summarizePrompt, ...fifteenMessages],
+                    messages: [...fifteenMessages, summarizePrompt],
                 }
             );
             //parse out the bot response (response.data[response.data.length - 1].content)?
@@ -375,7 +385,7 @@ const Chat = () => {
                     placeholderTextColor='#000'
                     underlineColorAndroid='#000'
                 />
-                <Button disabled={userInput.trim() === ""} title='Send' onPress={handleSend} />
+                <Button disabled={userInput.trim() === "" || waitingOnBotResponse} title='Send' onPress={handleSend} />
             </View>
 
         </KeyboardAvoidingView>
