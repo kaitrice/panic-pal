@@ -14,20 +14,29 @@ import {
 import axios from 'axios'; // Import axios
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../values/colors'
+import { getDatabase, getAuth, child, set, get, ref } from '../values/firebaseConfig';
 
 const Chat = () => {
-    const systemMessage = {
+    //AsyncStorage.removeItem('chatHistory');
+    const staticPrePrompt = {
         "role": 'system',
         "content": "The assistant is a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. The assistant helps the user get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. Keep responses very concise and brief.",
     };
+    const initialCustomPrePrompt = {
+        "role": 'system',
+        "content": "Nothing is currently known about the user.",
+    };
     const [interventionPrompt, setInterventionPrompt] = useState('');
     const [userInput, setCurrentInput] = useState('');
-    const [chatHistory, setMessages] = useState([systemMessage]);
+    const [chatHistory, setMessages] = useState([]);
+    const [customPrePrompt, setCustomPrePrompt] = useState(initialCustomPrePrompt); // preprompt
+    const [lastMessageTime, setLastMessageTime] = useState(Date.now());
     const flatListRef = useRef();
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const [inputAreaHeight, setInputAreaHeight] = useState(0);
 
     const [isChatHistoryLoading, setIsChatHistoryLoading] = useState(true);
+    const [isPrePromptLoading, setIsPrePromptLoading] = useState(true);
 
     useEffect(() => {
         AsyncStorage.getItem('chatHistory').then((value) => {
@@ -45,6 +54,48 @@ const Chat = () => {
         });
     }, [])
 
+    useEffect(() => {
+        AsyncStorage.getItem('lastMessageTime').then((value) => {
+            if (value !== null) {
+                const lastMessageTime = parseInt(value);
+                const currentTime = Date.now();
+                setLastMessageTime(lastMessageTime)
+                //INDIE: TO-DO check my math, i'm trying to go from milliseconds to seconds to hours
+                const hoursElapsed = ((currentTime - lastMessageTime) / 1000) / 3600;
+                console.log(hoursElapsed);
+                if (hoursElapsed > 1) {
+                    if (chatHistory[chatHistory.length - 1].role === "system") {
+                        chatHistory[chatHistory.length - 1].content === hoursElapsed + " hours have elapsed."
+                    }
+                    else {
+                        const newMessage = {
+                            "role": 'system',
+                            "content": hoursElapsed + " hours have elapsed.",
+                        };
+                        setMessages((prevMessages) => [...prevMessages, newMessage]);
+                    }
+                }
+            }
+        });
+    }, [])
+
+    useEffect(() => {
+        const dbRef = ref(getDatabase());
+        const auth = getAuth();
+        get(child(dbRef, "users/" + auth.currentUser.uid + "/preprompt")).then((snapshot) => {
+            if (snapshot.exists()) {
+                console.log("snapshot exists");
+                console.log(snapshot.key + snapshot.val())
+                setIsPrePromptLoading(false);
+            }
+            else {
+                console.log("no data");
+                setIsPrePromptLoading(false);
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    }, [])
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -64,7 +115,7 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
-        
+
         if (flatListRef.current) {
             flatListRef.current.scrollToEnd({ animated: true });
         }
@@ -84,15 +135,15 @@ const Chat = () => {
 
     async function setDataAsync(value) {
         AsyncStorage.setItem('interventions', JSON.stringify(value))
-        .then(() => {
-            setInterventionPrompt(value);
-        })
-        .catch((e) => {
-            console.error("Error setting interventions:", e);
-        });
+            .then(() => {
+                setInterventionPrompt(value);
+            })
+            .catch((e) => {
+                console.error("Error setting interventions:", e);
+            });
     }
 
-    if (isChatHistoryLoading) {
+    if (isChatHistoryLoading || isPrePromptLoading) {
         //console.log("loading")
         return <View><Text>Loading...</Text></View>;
     }
@@ -111,7 +162,10 @@ const Chat = () => {
         startLoadingMessage();
 
 
-        const botMessage = await getBotResponse([...chatHistory, userMessage]);
+        const botMessage = await getBotResponse([staticPrePrompt, customPrePrompt, ...chatHistory, userMessage]); //not sure this works
+        AsyncStorage.setItem('lastMessageTime', Date.now().toString()).catch((e) => {
+            console.error("Error setting message time:", e);
+        })
         stopLoadingMessage();
         localHistory = [...localHistory, botMessage];
         setMessages((prevMessages) => [...prevMessages, botMessage]);
@@ -134,13 +188,13 @@ const Chat = () => {
     const startLoadingMessage = () => {
         const messages = [".. ", "...", ".  "];
         let messageIndex = 0;
-    
+
         setMessages(prevMessages => [...prevMessages, { role: 'loading', content: '.  ' }]);
-    
+
         loadingInterval = setInterval(() => {
             const newContent = messages[messageIndex];
             messageIndex = (messageIndex + 1) % messages.length;
-    
+
             // Update the content of the loading message in chat history
             setMessages(prevMessages => {
                 const newMessages = [...prevMessages];
@@ -152,10 +206,10 @@ const Chat = () => {
             });
         }, 500); // Adjust the interval as needed
     };
-    
+
     const stopLoadingMessage = () => {
         clearInterval(loadingInterval);
-    
+
         // Remove the loading message from chat history
         setMessages(prevMessages => prevMessages.filter(m => m.role !== 'loading'));
     };
@@ -185,7 +239,51 @@ const Chat = () => {
         }
     };
 
+    async function summarizeChatHistory(fifteenMessages) {
+        //send chatgpt a request asking it to summarize the messages
+        //INDIE: TO-DO. 
+        //if you want the current preprompt to be considered, you can access it using variable customPrePrompt
+        const summarizePrompt = {
+            "role": 'system',
+            "content": "Please summarize these messages and keep it short",
+        };
+        try {
+            const response = await axios.post(
+                'https://panicpal.azurewebsites.net/api/PanicPal?code=o3_4CaEJP8c1jTBF2CUeUSlnwlj8oDwSrK6jiuG4ZPHnAzFuUUyCIg==',
+                {
+                    messages: [summarizePrompt, ...fifteenMessages],
+                }
+            );
+            //parse out the bot response (response.data[response.data.length - 1].content)?
+            console.log(response.data[response.data.length - 1].content);
+            return response.data[response.data.length - 1].content;
+
+        } catch (error) {
+            console.error('Error getting bot response: ', error);
+            return "error"
+        }
+        //parse out the bot response (response.data[response.data.length - 1].content)?
+        //return the summary
+    }
+
     async function saveChatHistory(history) {
+        if (history.length >= 30) {
+            const firstFifteenMessages = history.slice(0, 15); //get first 15 messages
+            const summary = summarizeChatHistory(firstFifteenMessages);
+            if (summary !== "error") {
+                const newPrePrompt = {
+                    "role": 'system',
+                    "content": summary,
+                };
+                setCustomPrePrompt(newPrePrompt);
+                history = history.slice(15); //cut off first 15 messages
+                setMessages(history);
+                const dbRef = getDatabase();
+                const auth = getAuth();
+                set(ref(dbRef, "users/" + auth.currentUser.uid + "/preprompt"), newPrePrompt);
+            }
+        }
+
         try {
             console.log("set history to")
             console.log(JSON.stringify(history))
@@ -243,23 +341,23 @@ const Chat = () => {
             />
             {chatHistory && (
                 <View style={styles.promptContainer}>
-                    <TouchableOpacity 
-                        style={styles.promptBtn} 
-                        onPress={() => { sendPrompt( interventionPrompt[0] ) }}
+                    <TouchableOpacity
+                        style={styles.promptBtn}
+                        onPress={() => { sendPrompt(interventionPrompt[0]) }}
                     >
-                        <Text>{ interventionPrompt[0] }</Text>
+                        <Text>{interventionPrompt[0]}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity 
-                        style={styles.promptBtn} 
-                        onPress={() => { sendPrompt( interventionPrompt[1] ) }}
+                    <TouchableOpacity
+                        style={styles.promptBtn}
+                        onPress={() => { sendPrompt(interventionPrompt[1]) }}
                     >
-                        <Text>{ interventionPrompt[1] }</Text>
+                        <Text>{interventionPrompt[1]}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity 
-                        style={styles.promptBtn} 
-                        onPress={() => { sendPrompt( interventionPrompt[2] ) }}
+                    <TouchableOpacity
+                        style={styles.promptBtn}
+                        onPress={() => { sendPrompt(interventionPrompt[2]) }}
                     >
-                        <Text>{ interventionPrompt[2] }</Text>
+                        <Text>{interventionPrompt[2]}</Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -269,15 +367,15 @@ const Chat = () => {
                     setInputAreaHeight(height);
                 }}
             >
-            <TextInput
-                style={styles.input}
-                value={userInput}
-                onChangeText={setCurrentInput}
-                placeholder="Type your message here..."
-                placeholderTextColor='#000'
-                underlineColorAndroid='#000'
-            />
-            <Button disabled={userInput.trim()===""}  title='Send' onPress={handleSend} />
+                <TextInput
+                    style={styles.input}
+                    value={userInput}
+                    onChangeText={setCurrentInput}
+                    placeholder="Type your message here..."
+                    placeholderTextColor='#000'
+                    underlineColorAndroid='#000'
+                />
+                <Button disabled={userInput.trim() === ""} title='Send' onPress={handleSend} />
             </View>
 
         </KeyboardAvoidingView>
@@ -321,7 +419,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.userMessage,
         borderRadius: 10,
         marginBottom: 5,
-        maxWidth: '80%', 
+        maxWidth: '80%',
     },
     assistantMessage: {
         padding: 10,
