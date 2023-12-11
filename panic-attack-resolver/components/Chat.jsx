@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
+    Animated,
     FlatList,
     Button,
     Text,
@@ -34,6 +35,7 @@ const Chat = () => {
     const flatListRef = useRef();
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const [inputAreaHeight, setInputAreaHeight] = useState(0);
+    const fadeAnim = useRef(new Animated.Value(1)).current;
 
     const [isChatHistoryLoading, setIsChatHistoryLoading] = useState(true);
 
@@ -93,6 +95,14 @@ const Chat = () => {
         }
     }, [prompt]);
 
+    const fadeOut = () => {
+        Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 10000, // Animation duration in milliseconds
+            useNativeDriver: true
+        }).start(() => setViewPrompt(false)); // Hide the prompt after animation
+    };
+
     async function setDataAsync(value) {
         AsyncStorage.setItem('interventions', JSON.stringify(value))
         .then(() => {
@@ -140,10 +150,11 @@ const Chat = () => {
 
     const handlePrompt = (key) => {
         const promptInput = promptMessage[key] || "Please give me intervention techniques for panic attacks.";        
-        console.log(promptInput);
+        
         setCurrentInput(promptInput);
         setPrompt(promptInput);
-    }
+        fadeOut(); // Start the fade-out animation
+    };
 
     let loadingInterval = null;
 
@@ -258,19 +269,17 @@ const Chat = () => {
                 }}
             />
             {viewPrompt && (
-                <View style={styles.promptContainer}>
+                <Animated.View style={[styles.promptContainer, { opacity: fadeAnim }]}>
                     {Object.keys(promptMessage).map((key) => (
                         <TouchableOpacity 
                             key={key}
                             style={styles.promptBtn}
-                            onPress={() => handlePrompt(promptMessage[key])}
+                            onPress={() => handlePrompt(key)}
                         >
-                            <Text>{key}</Text> 
+                            <Text>{key}</Text>
                         </TouchableOpacity>
                     ))}
-
-
-                </View>
+                </Animated.View>
             )}
             <View style={styles.inputAreaContainer}
                 onLayout={(event) => {
