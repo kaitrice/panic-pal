@@ -285,7 +285,7 @@ const Chat = () => {
         }
     };
 
-    async function generateNewCustomPrePrompt(fifteenMessages) {
+    async function generateNewCustomPrePrompt(messages) {
         console.log("\ngenerateNewCustomPrePrompt ___________________________________________");
         //send chatgpt a request asking it to summarize the messages
         //INDIE: TO-DO. 
@@ -294,17 +294,28 @@ const Chat = () => {
             "role": 'system',
             "content": "Please summarize what you could learn about being a helpful therapist to this client from these messages. Include any information about them that would help you personalize their service. You will use this to update your pre-prompt for this client.",
         };
-        console.log("\nGNCPP messages: " + JSON.stringify([staticPrePrompt, customPrePrompt, ...fifteenMessages, generateLearnedPrompt]));
+        console.log("\nGNCPP messages: " + JSON.stringify([staticPrePrompt, customPrePrompt, ...messages, generateLearnedPrompt]));
 
-        learned = await getBotResponse([staticPrePrompt, customPrePrompt, ...fifteenMessages, generateLearnedPrompt]);
+        learned = await getBotResponse([staticPrePrompt, customPrePrompt, ...messages, generateLearnedPrompt]);
         console.log("\nLEARNED: " + JSON.stringify(learned));
+
+        // if it errors out just stop and return old preprompt, try again next time.
+        if (learned.content === "I can't connect to Azure.") {
+            return "error";
+        }
 
         const generateNewPrePromptPrompt = {
             "role": 'system',
             "content": "The assistant is an anxiety and panic attack therapist bot. The previous messages are the current client-specific preprompt and what was learned from the most recent interactions with the client. Please output an updated client-specific preprompt that includes any information about them that may be helpful to know in the future.",
         };
 
-        newCustomPrePrompt = await getBotResponse([customPrePrompt, learned, generateNewPrePromptPrompt]);
+        let newCustomPrePrompt = await getBotResponse([customPrePrompt, learned, generateNewPrePromptPrompt]);
+
+        // if it errors out just stop and return old preprompt, try again next time.
+        if (newCustomPrePrompt.content === "I can't connect to Azure.") {
+            return "error";
+        }
+
         newCustomPrePrompt = newCustomPrePrompt.content;
 
         console.log("GNCPP newCustomPrePrompt: " + newCustomPrePrompt);
@@ -315,7 +326,6 @@ const Chat = () => {
     async function saveChatHistory(history) {
         console.log("\nSAVECHATHISTORY _________________________________________");
         if (history.length >= 20) {
-            // const firstFifteenMessages = history.slice(0, 10); //get first 15 messages
             const newCustomPrePromptText = await generateNewCustomPrePrompt(history);
             console.log("\nSCH newCustomPrePromptText: " + newCustomPrePromptText)
             if (newCustomPrePromptText !== "error") {
