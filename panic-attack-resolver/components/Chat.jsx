@@ -38,6 +38,8 @@ const Chat = () => {
     const [isChatHistoryLoading, setIsChatHistoryLoading] = useState(true);
     const [isPrePromptLoading, setIsPrePromptLoading] = useState(true);
 
+    const[waitingOnBotResponse, setWaitingOnBotResponse] = useState(false);
+
     useEffect(() => {
         AsyncStorage.getItem('chatHistory').then((value) => {
             const jsonValue = JSON.parse(value);
@@ -165,6 +167,8 @@ const Chat = () => {
         localHistory = [...localHistory, userMessage];
         setMessages((prevMessages) => [...prevMessages, userMessage]);
         setCurrentInput('');
+
+        setWaitingOnBotResponse(true);
         startLoadingMessage();
 
 
@@ -172,6 +176,7 @@ const Chat = () => {
         AsyncStorage.setItem('lastMessageTime', Date.now().toString()).catch((e) => {
             console.error("Error setting message time:", e);
         })
+        setWaitingOnBotResponse(false);
         stopLoadingMessage();
         localHistory = [...localHistory, botMessage];
         setMessages((prevMessages) => [...prevMessages, botMessage]);
@@ -405,7 +410,7 @@ const Chat = () => {
                     placeholderTextColor='#000'
                     underlineColorAndroid='#000'
                 />
-                <Button disabled={userInput.trim() === ""} title='Send' onPress={handleSend} />
+                <Button disabled={userInput.trim() === "" || waitingOnBotResponse} title='Send' onPress={handleSend} />
             </View>
 
         </KeyboardAvoidingView>
