@@ -75,6 +75,13 @@ const Breathing = () => {
             useNativeDriver: true,
         }).start();
     }
+    const quickShrinkAnimation = () => {
+        Animated.timing(size, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+        }).start();
+    }
 
     async function setBreatheInAsync(value) {
         try {
@@ -158,13 +165,26 @@ const Breathing = () => {
         return <View><Text>Loading...</Text></View>;
     }
 
+    const mainButton = () => {
+        if(!isActive){
+            setIsActive(true);
+        }
+        else {
+            setIsActive(false);
+            quickShrinkAnimation();
+            setSeconds(startTime);
+            setText("Press to start!");
+            setState(0);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, { textAlign: 'center' }]}>{text}</Text>
             <Animated.View style={{ alignItems: "center" }}>
                 <CenteredButton
                     title="Hi"
-                    onPress={() => { setIsActive(!isActive); }} circle
+                    onPress={mainButton} circle
                     color={theme == 'light' ? styles.lightTheme : styles.darkTheme}
                     seconds={seconds}
                     size={size}
