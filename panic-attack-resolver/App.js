@@ -52,9 +52,9 @@ const App = () => {
       <View style={styles.middle}>
         {renderScreen()}
       </View>
-      {currentScreen !== 'Login' && (
+      {/* {currentScreen !== 'Login' && ( */}
         <Footer style={styles.bottom} setCurrentScreen={setCurrentScreen} currentScreen={currentScreen} />
-      )}
+      {/* )} */}
       <StatusBar style="auto" />
     </View>
   )
