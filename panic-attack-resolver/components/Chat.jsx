@@ -64,7 +64,8 @@ const Chat = () => {
                 const hoursElapsed = ((currentTime - lastMessageTime) / 1000) / 3600;
                 console.log(hoursElapsed);
                 if (hoursElapsed > 1) {
-                    if (chatHistory[chatHistory.length - 1].role === "system") {
+                    let lastMessageSystem = chatHistory[chatHistory.length - 1].role === "system";
+                    if (lastMessageSystem) {
                         chatHistory[chatHistory.length - 1].content === hoursElapsed + " hours have elapsed."
                     }
                     else {
@@ -86,6 +87,11 @@ const Chat = () => {
             if (snapshot.exists()) {
                 console.log("snapshot exists");
                 console.log(snapshot.key + snapshot.val())
+                const newPrePrompt = {
+                    "role": 'system',
+                    "content": snapshot.val(),
+                };
+                setCustomPrePrompt(newPrePrompt);
                 setIsPrePromptLoading(false);
             }
             else {
@@ -239,24 +245,48 @@ const Chat = () => {
         }
     };
 
-    async function summarizeChatHistory(fifteenMessages) {
+    async function generateNewCustomPrePrompt(fifteenMessages) {
         //send chatgpt a request asking it to summarize the messages
         //INDIE: TO-DO. 
         //if you want the current preprompt to be considered, you can access it using variable customPrePrompt
-        const summarizePrompt = {
+        const generateLearnedPrompt = {
             "role": 'system',
-            "content": "Please summarize these messages and keep it short",
+            "content": "Please summarize what you could learn about being a helpful therapist to this client from these messages. You will use this to update your pre-prompt for this client.",
         };
         try {
             const response = await axios.post(
                 'https://panicpal.azurewebsites.net/api/PanicPal?code=o3_4CaEJP8c1jTBF2CUeUSlnwlj8oDwSrK6jiuG4ZPHnAzFuUUyCIg==',
                 {
-                    messages: [summarizePrompt, ...fifteenMessages],
+                    messages: [staticPrePrompt, customPrePrompt, ...fifteenMessages, generateLearnedPrompt],
                 }
             );
             //parse out the bot response (response.data[response.data.length - 1].content)?
-            console.log(response.data[response.data.length - 1].content);
-            return response.data[response.data.length - 1].content;
+            console.log("learned: " + response.data[response.data.length - 1].content);
+
+            learned = response.data[response.data.length - 1].content;
+
+            const learnedMessage = {
+                "role": 'system',
+                "content": learned,
+            };
+            // have chatgpt create new preprompt from current context and what it learned
+            const generateNewPrePromptPrompt = {
+                "role": 'system',
+                "content": "You are a therapist bot helping clients with panic attacks. The previous messages are the current client-specific preprompt and what you learned from the most recent interactions with your client. Please generate a new preprompt for yourself based on the previous client-specific preprompt and anything significant that you learned about the client. Keep the preprompt under 500 words.",
+            };
+
+            const response2 = await axios.post(
+                'https://panicpal.azurewebsites.net/api/PanicPal?code=o3_4CaEJP8c1jTBF2CUeUSlnwlj8oDwSrK6jiuG4ZPHnAzFuUUyCIg==',
+                {
+                    messages: [customPrePrompt, learnedMessage, generateNewPrePromptPrompt],
+                }
+            );
+
+            console.log("newPrePrompt: " + response2.data[response.data.length - 1].content);
+
+            newCustomPrePrompt = response2.data[response.data.length - 1].content;
+
+            return newCustomPrePrompt;
 
         } catch (error) {
             console.error('Error getting bot response: ', error);
@@ -269,13 +299,13 @@ const Chat = () => {
     async function saveChatHistory(history) {
         if (history.length >= 30) {
             const firstFifteenMessages = history.slice(0, 15); //get first 15 messages
-            const summary = summarizeChatHistory(firstFifteenMessages);
+            const newCustomPrePromptText = generateNewCustomPrePrompt(firstFifteenMessages);
             if (summary !== "error") {
-                const newPrePrompt = {
+                const newCustomPrePrompt = {
                     "role": 'system',
-                    "content": summary,
+                    "content": newCustomPrePromptText,
                 };
-                setCustomPrePrompt(newPrePrompt);
+                setCustomPrePrompt(newCustomPrePrompt);
                 history = history.slice(15); //cut off first 15 messages
                 setMessages(history);
                 const dbRef = getDatabase();
