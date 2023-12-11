@@ -15,12 +15,16 @@ import {
 import axios from 'axios'; // Import axios
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../values/colors'
-// AsyncStorage.removeItem('chatHistory'); 
+import { getDatabase, getAuth, child, set, get, ref } from '../values/firebaseConfig';
 
 const Chat = () => {
-    const systemMessage = {
+    const staticPrePrompt = {
         "role": 'system',
         "content": "The assistant is a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. The assistant helps the user get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. Keep responses very concise and brief.",
+    };
+    const initialCustomPrePrompt = {
+        "role": 'system',
+        "content": "Nothing is currently known about the user.",
     };
     const promptMessage = {
         'Reassurance': "Please give me reassurance.",
@@ -31,15 +35,21 @@ const Chat = () => {
     const [prompt, setPrompt] = useState('');
     const [viewPrompt, setViewPrompt] = useState(true);
     const [userInput, setCurrentInput] = useState('');
-    const [chatHistory, setMessages] = useState([systemMessage]);
+    const [chatHistory, setMessages] = useState([]);
+    const [customPrePrompt, setCustomPrePrompt] = useState(initialCustomPrePrompt);
+    const [lastMessageTime, setLastMessageTime] = useState(Date.now());
     const flatListRef = useRef();
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const [inputAreaHeight, setInputAreaHeight] = useState(0);
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
     const [isChatHistoryLoading, setIsChatHistoryLoading] = useState(true);
+    const [isPrePromptLoading, setIsPrePromptLoading] = useState(true);
+
+    const[waitingOnBotResponse, setWaitingOnBotResponse] = useState(false);
 
     useEffect(() => {
+        // AsyncStorage.setItem('chatHistory', JSON.stringify([]));
         AsyncStorage.getItem('chatHistory').then((value) => {
             const jsonValue = JSON.parse(value);
             if (jsonValue !== null) {
@@ -52,6 +62,55 @@ const Chat = () => {
                 //console.log("set default chat history")
                 setIsChatHistoryLoading(false);
             }
+        });
+    }, [])
+
+    useEffect(() => {
+        AsyncStorage.getItem('lastMessageTime').then((value) => {
+            if (value !== null) {
+                const lastMessageTime = parseInt(value);
+                const currentTime = Date.now();
+                setLastMessageTime(lastMessageTime)
+                //INDIE: TO-DO check my math, i'm trying to go from milliseconds to seconds to hours
+                const hoursElapsed = ((currentTime - lastMessageTime) / 1000) / 3600;
+                console.log("Last message sent time:" + hoursElapsed);
+                if (chatHistory.length != 0 && hoursElapsed > 0) {
+                    let lastMessageSystem = chatHistory[chatHistory.length - 1].role === "system";
+                    if (lastMessageSystem) {
+                        chatHistory[chatHistory.length - 1].content === hoursElapsed + " hours have elapsed."
+                    }
+                    else {
+                        const newMessage = {
+                            "role": 'system',
+                            "content": hoursElapsed + " hours have elapsed.",
+                        };
+                        setMessages((prevMessages) => [...prevMessages, newMessage]);
+                    }
+                }
+            }
+        });
+    }, [])
+
+    useEffect(() => {
+        const dbRef = ref(getDatabase());
+        const auth = getAuth();
+        get(child(dbRef, "users/" + auth.currentUser.uid + "/preprompt")).then((snapshot) => {
+            if (snapshot.exists()) {
+                console.log("snapshot exists");
+                console.log(snapshot.key + snapshot.val())
+                const newPrePrompt = {
+                    "role": 'system',
+                    "content": snapshot.val(),
+                };
+                setCustomPrePrompt(newPrePrompt);
+                setIsPrePromptLoading(false);
+            }
+            else {
+                console.log("no data");
+                setIsPrePromptLoading(false);
+            }
+        }).catch((error) => {
+            console.error(error);
         });
     }, [])
 
@@ -73,6 +132,7 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
+
         if (flatListRef.current) {
             flatListRef.current.scrollToEnd({ animated: true });
         }
@@ -107,15 +167,15 @@ const Chat = () => {
 
     async function setDataAsync(value) {
         AsyncStorage.setItem('interventions', JSON.stringify(value))
-        .then(() => {
-            setInterventionPrompt(value);
-        })
-        .catch((e) => {
-            console.error("Error setting interventions:", e);
-        });
+            .then(() => {
+                setInterventionPrompt(value);
+            })
+            .catch((e) => {
+                console.error("Error setting interventions:", e);
+            });
     }
 
-    if (isChatHistoryLoading) {
+    if (isChatHistoryLoading || isPrePromptLoading) {
         //console.log("loading")
         return <View><Text>Loading...</Text></View>;
     }
@@ -134,10 +194,16 @@ const Chat = () => {
         localHistory = [...localHistory, userMessage];
         setMessages((prevMessages) => [...prevMessages, userMessage]);
         setCurrentInput('');
+
+        setWaitingOnBotResponse(true);
         startLoadingMessage();
 
 
-        const botMessage = await getBotResponse([...chatHistory, userMessage]);
+        const botMessage = await getBotResponse([staticPrePrompt, customPrePrompt, ...chatHistory, userMessage]); //not sure this works
+        AsyncStorage.setItem('lastMessageTime', Date.now().toString()).catch((e) => {
+            console.error("Error setting message time:", e);
+        })
+        setWaitingOnBotResponse(false);
         stopLoadingMessage();
         localHistory = [...localHistory, botMessage];
         setMessages((prevMessages) => [...prevMessages, botMessage]);
@@ -162,13 +228,13 @@ const Chat = () => {
     const startLoadingMessage = () => {
         const messages = [".. ", "...", ".  "];
         let messageIndex = 0;
-    
+
         setMessages(prevMessages => [...prevMessages, { role: 'loading', content: '.  ' }]);
-    
+
         loadingInterval = setInterval(() => {
             const newContent = messages[messageIndex];
             messageIndex = (messageIndex + 1) % messages.length;
-    
+
             // Update the content of the loading message in chat history
             setMessages(prevMessages => {
                 const newMessages = [...prevMessages];
@@ -180,10 +246,10 @@ const Chat = () => {
             });
         }, 500); // Adjust the interval as needed
     };
-    
+
     const stopLoadingMessage = () => {
         clearInterval(loadingInterval);
-    
+
         // Remove the loading message from chat history
         setMessages(prevMessages => prevMessages.filter(m => m.role !== 'loading'));
     };
@@ -192,7 +258,9 @@ const Chat = () => {
         console.log(`Button pressed for: ${prompt}`);
     };
 
+    // returns a message object (dictionary)
     const getBotResponse = async (messages) => {
+        console.log("GETBOT RESPONSE _________________________________");
         console.log(messages);
         try {
             const response = await axios.post(
@@ -201,19 +269,66 @@ const Chat = () => {
                     messages: messages,
                 }
             );
-            console.log(response.data);
+            console.log("GBR RESPONSE.DATA: " + JSON.stringify(response.data));
             return response.data;
 
         } catch (error) {
             console.error('Error getting bot response: ', error);
             return {
                 "role": 'assistant',
-                "content": "I can't connect to Azure",
+                "content": "I can't connect to Azure.",
             };
         }
     };
 
+    async function generateNewCustomPrePrompt(fifteenMessages) {
+        console.log("generateNewCustomPrePrompt");
+        //send chatgpt a request asking it to summarize the messages
+        //INDIE: TO-DO. 
+        //if you want the current preprompt to be considered, you can access it using variable customPrePrompt
+        const generateLearnedPrompt = {
+            "role": 'system',
+            "content": "Please summarize what you could learn about being a helpful therapist to this client from these messages. You will use this to update your pre-prompt for this client.",
+        };
+        console.log("GNCPP messages: " + JSON.stringify([staticPrePrompt, customPrePrompt, ...fifteenMessages, generateLearnedPrompt]));
+
+        learned = await getBotResponse([staticPrePrompt, customPrePrompt, ...fifteenMessages, generateLearnedPrompt]);
+        console.log("\nLEARNED: " + JSON.stringify(learned));
+
+        const generateNewPrePromptPrompt = {
+            "role": 'system',
+            "content": "You are a therapist bot helping clients with panic attacks. The previous messages are the current client-specific preprompt and what you learned from the most recent interactions with your client. Please generate a new preprompt for yourself based on the previous client-specific preprompt and anything significant that you learned about the client. Keep the preprompt under 4 sentences.",
+        };
+
+        newCustomPrePrompt = await getBotResponse([customPrePrompt, learned, generateNewPrePromptPrompt]);
+        newCustomPrePrompt = newCustomPrePrompt.content;
+
+        console.log("GNCPP newCustomPrePrompt: " + newCustomPrePrompt);
+
+        return newCustomPrePrompt;
+    }
+
     async function saveChatHistory(history) {
+        console.log("\nSAVECHATHISTORY");
+        if (history.length >= 10) {
+            const firstFifteenMessages = history.slice(0, 5); //get first 15 messages
+            const newCustomPrePromptText = await generateNewCustomPrePrompt(firstFifteenMessages);
+            console.log("SCH newCustomPrePromptText: " + newCustomPrePromptText)
+            if (newCustomPrePromptText !== "error") {
+                const newCustomPrePrompt = {
+                    "role": 'system',
+                    "content": newCustomPrePromptText,
+                };
+                setCustomPrePrompt(newCustomPrePrompt);
+                history = history.slice(5); //cut off first 15 messages
+                console.log("history: " + JSON.stringify(history));
+                setMessages(history);
+                const dbRef = getDatabase();
+                const auth = getAuth();
+                set(ref(dbRef, "users/" + auth.currentUser.uid), {preprompt: newCustomPrePromptText});
+            }
+        }
+
         try {
             console.log("set history to")
             console.log(JSON.stringify(history))
@@ -296,7 +411,7 @@ const Chat = () => {
                     placeholderTextColor='#000'
                     underlineColorAndroid='#000'
                 />
-                <Button disabled={userInput.trim()===""}  title='Send' onPress={handleSend} />
+                <Button disabled={userInput.trim()==="" || waitingOnBotResponse}  title='Send' onPress={handleSend} />
             </View>
 
         </KeyboardAvoidingView>
@@ -341,7 +456,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.userMessage,
         borderRadius: 10,
         marginBottom: 5,
-        maxWidth: '80%', 
+        maxWidth: '80%',
     },
     assistantMessage: {
         padding: 10,
