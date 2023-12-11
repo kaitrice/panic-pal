@@ -411,7 +411,7 @@ const Chat = () => {
                     placeholderTextColor='#000'
                     underlineColorAndroid='#000'
                 />
-                <Button disabled={userInput.trim()===""}  title='Send' onPress={handleSend} />
+                <Button disabled={userInput.trim()==="" || waitingOnBotResponse}  title='Send' onPress={handleSend} />
             </View>
 
         </KeyboardAvoidingView>
