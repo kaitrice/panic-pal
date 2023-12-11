@@ -16,7 +16,7 @@ const startTime = 2;
 const defaultBreatheInTime = 6;
 const defaultBreatheOutTime = 6;
 
-const CenteredButton = ({ title, onPress, disabled, circle, color, seconds, size }) => (
+const CenteredButton = ({ title, onPress, disabled, circle, color, seconds, size, isActive }) => (
     <TouchableOpacity
         onPress={onPress}
         disabled={disabled}
@@ -31,7 +31,9 @@ const CenteredButton = ({ title, onPress, disabled, circle, color, seconds, size
             }
         ]}
     >
+    {isActive && (
         <Text style={styles.buttonText}>{seconds}</Text>
+    )}
     </TouchableOpacity>
 )
 
@@ -70,6 +72,13 @@ const Breathing = () => {
         Animated.timing(size, {
             toValue: 1,
             duration: breatheOutTime * 1000,
+            useNativeDriver: true,
+        }).start();
+    }
+    const quickShrinkAnimation = () => {
+        Animated.timing(size, {
+            toValue: 1,
+            duration: 1000,
             useNativeDriver: true,
         }).start();
     }
@@ -156,16 +165,30 @@ const Breathing = () => {
         return <View><Text>Loading...</Text></View>;
     }
 
+    const mainButton = () => {
+        if(!isActive){
+            setIsActive(true);
+        }
+        else {
+            setIsActive(false);
+            quickShrinkAnimation();
+            setSeconds(startTime);
+            setText("Press to start!");
+            setState(0);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, { textAlign: 'center' }]}>{text}</Text>
             <Animated.View style={{ alignItems: "center" }}>
                 <CenteredButton
                     title="Hi"
-                    onPress={() => { setIsActive(!isActive); }} circle
+                    onPress={mainButton} circle
                     color={theme == 'light' ? styles.lightTheme : styles.darkTheme}
                     seconds={seconds}
                     size={size}
+                    isActive={isActive}
                 />
             </Animated.View>
             <Animated.View
@@ -197,6 +220,16 @@ const Breathing = () => {
                         } : {
                             color: "white"
                         }}
+                        selectedTrackStyle={theme == 'light' ? {
+                            
+                        } : {
+                            borderColor: "gray"
+                        }}
+                        trackStyle={theme == 'light' ? {
+                            
+                        } : {
+                            borderColor: "#333333"
+                        }}
                         min={1} max={15}
                         values={[breatheInTime]}
                         onChange={(values) => {
@@ -222,6 +255,16 @@ const Breathing = () => {
                             
                         } : {
                             color: "white"
+                        }}
+                        selectedTrackStyle={theme == 'light' ? {
+                            
+                        } : {
+                            borderColor: "gray"
+                        }}
+                        trackStyle={theme == 'light' ? {
+                            
+                        } : {
+                            borderColor: "#333333"
                         }}
                         min={1} max={15}
                         values={[breatheOutTime]}

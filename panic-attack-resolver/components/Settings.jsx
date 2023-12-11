@@ -191,6 +191,7 @@ export default function Settings({setCurrentScreen}) {
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={toggleSwitch}
                 value={isEnabled}
+                disabled={true}
             />
             <View style={styles.btnContainer}>
                 <TouchableOpacity style={[styles.signOutBtn, styles.btn]} onPress={() => { signOutUser() }}>

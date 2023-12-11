@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
+    Animated,
     FlatList,
     Button,
     Text,
@@ -26,7 +27,14 @@ const Chat = () => {
         "role": 'system',
         "content": "Nothing is currently known about the user.",
     };
-    const [interventionPrompt, setInterventionPrompt] = useState('');
+    const promptMessage = {
+        'Reassurance': "Please give me reassurance.",
+        'Breathing': "Please give me breathing techniques.",
+        'Grounding': "Please give me grounding techniques."
+    };
+    const [interventionPrompt, setInterventionPrompt] = useState([promptMessage[0], promptMessage[1], promptMessage[2]]);
+    const [prompt, setPrompt] = useState('');
+    const [viewPrompt, setViewPrompt] = useState(true);
     const [userInput, setCurrentInput] = useState('');
     const [chatHistory, setMessages] = useState([]);
     const [customPrePrompt, setCustomPrePrompt] = useState(initialCustomPrePrompt); // preprompt
@@ -34,6 +42,7 @@ const Chat = () => {
     const flatListRef = useRef();
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const [inputAreaHeight, setInputAreaHeight] = useState(0);
+    const fadeAnim = useRef(new Animated.Value(1)).current;
 
     const [isChatHistoryLoading, setIsChatHistoryLoading] = useState(true);
     const [isPrePromptLoading, setIsPrePromptLoading] = useState(true);
@@ -131,15 +140,30 @@ const Chat = () => {
 
     useEffect(() => {
         AsyncStorage.getItem('interventions').then((value) => {
-            if (value !== null) {
+            if (value !== null && JSON.parse(value).length > 0) {
                 setInterventionPrompt(JSON.parse(value));
             } else {
-                // Handle the case where 'interventions' not stored
-                const defaultInterventions = ['Grounding', 'Breathing', 'Reassurance'];
-                setDataAsync(defaultInterventions);
+                const defaultPrompts = Object.keys(promptMessage).map(key => promptMessage[key]);
+                setDataAsync(defaultPrompts);
+                setInterventionPrompt(defaultPrompts);
             }
-        })
+        });
     }, []);
+
+    useEffect(() => {
+        if (prompt !== '') {
+            handleSend();
+            // setPrompt('');
+        }
+    }, [prompt]);
+
+    const fadeOut = () => {
+        Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 10000, // Animation duration in milliseconds
+            useNativeDriver: true
+        }).start(() => setViewPrompt(false)); // Hide the prompt after animation
+    };
 
     async function setDataAsync(value) {
         AsyncStorage.setItem('interventions', JSON.stringify(value))
@@ -157,6 +181,9 @@ const Chat = () => {
     }
 
     const handleSend = async () => {
+        if (viewPrompt)
+            setViewPrompt(false);
+
         const userMessage = {
             "role": 'user',
             "content": userInput,
@@ -189,10 +216,12 @@ const Chat = () => {
         }, 100);
     };
 
-    const sendPrompt = (prompt) => {
-        setCurrentInput(prompt);
-        handleSend();
-    }
+    const handlePrompt = (index) => {
+        const promptInput = interventionPrompt[index] || "Please give me intervention techniques for panic attacks.";        
+        setCurrentInput(promptInput);
+        setPrompt(promptInput);
+        fadeOut(); // Start the fade-out animation
+    };
 
     let loadingInterval = null;
 
@@ -374,27 +403,18 @@ const Chat = () => {
                     }
                 }}
             />
-            {chatHistory && (
-                <View style={styles.promptContainer}>
-                    <TouchableOpacity
-                        style={styles.promptBtn}
-                        onPress={() => { sendPrompt(interventionPrompt[0]) }}
-                    >
-                        <Text>{interventionPrompt[0]}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.promptBtn}
-                        onPress={() => { sendPrompt(interventionPrompt[1]) }}
-                    >
-                        <Text>{interventionPrompt[1]}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.promptBtn}
-                        onPress={() => { sendPrompt(interventionPrompt[2]) }}
-                    >
-                        <Text>{interventionPrompt[2]}</Text>
-                    </TouchableOpacity>
-                </View>
+            {viewPrompt && (
+                <Animated.View style={[styles.promptContainer, { opacity: fadeAnim }]}>
+                    {interventionPrompt.map((prompt, index) => (
+                        <TouchableOpacity 
+                            key={index}
+                            style={styles.promptBtn}
+                            onPress={() => handlePrompt(index)}
+                        >
+                            <Text>{prompt}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </Animated.View>
             )}
             <View style={styles.inputAreaContainer}
                 onLayout={(event) => {
@@ -410,7 +430,7 @@ const Chat = () => {
                     placeholderTextColor='#000'
                     underlineColorAndroid='#000'
                 />
-                <Button disabled={userInput.trim() === "" || waitingOnBotResponse} title='Send' onPress={handleSend} />
+                <Button disabled={userInput.trim()===""}  title='Send' onPress={handleSend} />
             </View>
 
         </KeyboardAvoidingView>
@@ -436,6 +456,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 20,
         marginBottom: 20,
+        marginTop: 20,
     },
     input: {
         flex: 1,
