@@ -220,6 +220,16 @@ const Breathing = () => {
                         } : {
                             color: "white"
                         }}
+                        selectedTrackStyle={theme == 'light' ? {
+                            
+                        } : {
+                            borderColor: "gray"
+                        }}
+                        trackStyle={theme == 'light' ? {
+                            
+                        } : {
+                            borderColor: "#333333"
+                        }}
                         min={1} max={15}
                         values={[breatheInTime]}
                         onChange={(values) => {
@@ -245,6 +255,16 @@ const Breathing = () => {
                             
                         } : {
                             color: "white"
+                        }}
+                        selectedTrackStyle={theme == 'light' ? {
+                            
+                        } : {
+                            borderColor: "gray"
+                        }}
+                        trackStyle={theme == 'light' ? {
+                            
+                        } : {
+                            borderColor: "#333333"
                         }}
                         min={1} max={15}
                         values={[breatheOutTime]}
