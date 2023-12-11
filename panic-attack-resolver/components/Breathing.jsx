@@ -16,7 +16,7 @@ const startTime = 2;
 const defaultBreatheInTime = 6;
 const defaultBreatheOutTime = 6;
 
-const CenteredButton = ({ title, onPress, disabled, circle, color, seconds, size }) => (
+const CenteredButton = ({ title, onPress, disabled, circle, color, seconds, size, isActive }) => (
     <TouchableOpacity
         onPress={onPress}
         disabled={disabled}
@@ -31,7 +31,9 @@ const CenteredButton = ({ title, onPress, disabled, circle, color, seconds, size
             }
         ]}
     >
+    {isActive && (
         <Text style={styles.buttonText}>{seconds}</Text>
+    )}
     </TouchableOpacity>
 )
 
@@ -166,6 +168,7 @@ const Breathing = () => {
                     color={theme == 'light' ? styles.lightTheme : styles.darkTheme}
                     seconds={seconds}
                     size={size}
+                    isActive={isActive}
                 />
             </Animated.View>
             <Animated.View
