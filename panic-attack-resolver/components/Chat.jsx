@@ -80,12 +80,14 @@ const Chat = () => {
 
     useEffect(() => {
         AsyncStorage.getItem('interventions').then((value) => {
-            if (value !== null) {
+            if (value !== null && JSON.parse(value).length > 0) {
                 setInterventionPrompt(JSON.parse(value));
             } else {
-                setDataAsync(interventionPrompt);
+                const defaultPrompts = Object.keys(promptMessage).map(key => promptMessage[key]);
+                setDataAsync(defaultPrompts);
+                setInterventionPrompt(defaultPrompts);
             }
-        })
+        });
     }, []);
 
     useEffect(() => {
@@ -148,9 +150,8 @@ const Chat = () => {
         }, 100);
     };
 
-    const handlePrompt = (key) => {
-        const promptInput = promptMessage[key] || "Please give me intervention techniques for panic attacks.";        
-        
+    const handlePrompt = (index) => {
+        const promptInput = interventionPrompt[index] || "Please give me intervention techniques for panic attacks.";        
         setCurrentInput(promptInput);
         setPrompt(promptInput);
         fadeOut(); // Start the fade-out animation
@@ -270,13 +271,13 @@ const Chat = () => {
             />
             {viewPrompt && (
                 <Animated.View style={[styles.promptContainer, { opacity: fadeAnim }]}>
-                    {Object.keys(promptMessage).map((key) => (
+                    {interventionPrompt.map((prompt, index) => (
                         <TouchableOpacity 
-                            key={key}
+                            key={index}
                             style={styles.promptBtn}
-                            onPress={() => handlePrompt(key)}
+                            onPress={() => handlePrompt(index)}
                         >
-                            <Text>{key}</Text>
+                            <Text>{prompt}</Text>
                         </TouchableOpacity>
                     ))}
                 </Animated.View>
