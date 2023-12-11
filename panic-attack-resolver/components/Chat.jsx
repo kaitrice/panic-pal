@@ -454,9 +454,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        marginBottom: 20,
-        marginTop: 20,
+        // paddingHorizontal: 20,
+        marginBottom: 10,
+        marginTop: 10,
     },
     input: {
         flex: 1,
@@ -489,7 +489,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: colors.defaultButtonColor,
-        padding: 15
+        // marginTop: 5,
+        // marginBottom: 5,
+        margin: 2,
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 15,
+        paddingBottom: 15,
     },
 });
 
