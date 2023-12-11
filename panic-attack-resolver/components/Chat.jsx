@@ -77,7 +77,7 @@ const Chat = () => {
                 console.log("\nasyncChatHistory: " + JSON.stringify(asyncChatHistory));
                 console.log(asyncChatHistory.length != 0)
                 console.log(hoursElapsed > 0)
-                if (asyncChatHistory.length != 0 && hoursElapsed > 0) {
+                if (asyncChatHistory.length != 0 && hoursElapsed > .5) {
                     console.log("\nCHAT HISTORY BEING UPDATED");
                     let lastMessageSystem = asyncChatHistory[asyncChatHistory.length - 1].role === "system";
                     // remove last message if it was a time update
