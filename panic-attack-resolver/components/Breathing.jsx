@@ -10,6 +10,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Slider from "react-native-a11y-slider";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../values/colors'
+import { getAuth } from 'firebase/auth';
 
 const secondsPause = 1;
 const startTime = 2;
@@ -47,6 +48,8 @@ const Breathing = () => {
 
     const [isBreatheInLoading, setIsBreatheInLoading] = useState(true);
     const [isBreatheOutLoading, setIsBreatheOutLoading] = useState(true);
+
+    const uid = getAuth().currentUser.uid;
 
     const states = [
         ["Breathe in", breatheInTime],
@@ -87,7 +90,7 @@ const Breathing = () => {
         try {
             //console.log("Set volume to ", value)
             setBreatheInTime(value);
-            await AsyncStorage.setItem('breatheIn', value.toString());
+            await AsyncStorage.setItem('breatheIn' + uid, value.toString());
         } catch (e) {
             console.log("Error setting breatheIn")
         }
@@ -97,14 +100,14 @@ const Breathing = () => {
         try {
             //console.log("Set volume to ", value)
             setBreatheOutTime(value);
-            await AsyncStorage.setItem('breatheOut', value.toString());
+            await AsyncStorage.setItem('breatheOut' + uid, value.toString());
         } catch (e) {
             console.log("Error setting breatheOut")
         }
     }
 
     useEffect(() => {
-        AsyncStorage.getItem('breatheIn').then((value) => {
+        AsyncStorage.getItem('breatheIn' + uid).then((value) => {
             if (value !== null) {
                 setBreatheInTime(parseInt(value))
                 setIsBreatheInLoading(false)
@@ -115,7 +118,7 @@ const Breathing = () => {
                 setIsBreatheInLoading(false);
             }
         });
-        AsyncStorage.getItem('breatheOut').then((value) => {
+        AsyncStorage.getItem('breatheOut' + uid).then((value) => {
             if (value !== null) {
                 setBreatheOutTime(parseInt(value))
                 setIsBreatheOutLoading(false)

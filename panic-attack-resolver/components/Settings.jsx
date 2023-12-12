@@ -1,4 +1,3 @@
-import Slider from "react-native-a11y-slider";
 import React, { useState, useEffect } from 'react';
 import {
     Alert,
@@ -11,11 +10,11 @@ import {
 } from 'react-native';
 import DragList from 'react-native-draglist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { signOut, getAuth, deleteUser } from "../values/firebaseConfig";
+import { signOut, getAuth, getDatabase, deleteUser, remove, ref, child } from "../values/firebaseConfig";
 
 import { colors } from '../values/colors'
 
-const defaultInterventionOrder = ['Breathing', 'Grounding', 'Reassurance'];
+const defaultInterventionOrder = ['Reassurance', 'Breathing', 'Grounding'];
 const defaultVolume = 10;
 
 const auth = getAuth();
@@ -28,11 +27,12 @@ export default function Settings({setCurrentScreen}) {
     const theme = useColorScheme();
     const [isEnabled, setIsEnabled] = useState(theme === 'dark');
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const uid = auth.currentUser.uid;
 
-    //AsyncStorage.removeItem('volume'); //use this to test the default volume being put into storage correctly
-    //AsyncStorage.removeItem('interventions'); //use this to test the default interventions being put into storage correctly
+    //AsyncStorage.removeItem('volume' + uid); //use this to test the default volume being put into storage correctly
+    //AsyncStorage.removeItem('interventions' + uid); //use this to test the default interventions being put into storage correctly
     useEffect(() => {
-        AsyncStorage.getItem('interventions').then((value) => {
+        AsyncStorage.getItem('interventions' + uid).then((value) => {
             if (value !== null) {
                 setData(JSON.parse(value))
                 setisInterventionsLoading(false)
@@ -43,7 +43,7 @@ export default function Settings({setCurrentScreen}) {
                 setisInterventionsLoading(false);
             }
         });
-        AsyncStorage.getItem('volume').then((value) => {
+        AsyncStorage.getItem('volume' + uid).then((value) => {
             if (value !== null) {
                 setVolume(parseInt(value))
                 setisVolumeLoading(false)
@@ -99,7 +99,7 @@ export default function Settings({setCurrentScreen}) {
         try {
             //console.log("Set volume to ", value)
             setVolume(value);
-            await AsyncStorage.setItem('volume', value.toString());
+            await AsyncStorage.setItem('volume' + uid, value.toString());
         } catch (e) {
             console.log("Error setting volume")
         }
@@ -109,7 +109,7 @@ export default function Settings({setCurrentScreen}) {
         try {
             //console.log("Set volume to ", value)
             setData(value);
-            await AsyncStorage.setItem('interventions', JSON.stringify(value));
+            await AsyncStorage.setItem('interventions' + uid, JSON.stringify(value));
         } catch (e) {
             console.log("Error setting interventions")
         }
@@ -127,6 +127,10 @@ export default function Settings({setCurrentScreen}) {
                     text: "Delete",
                     onPress: () => {
                         const user = auth.currentUser;
+                        const dbRef = ref(getDatabase());
+                        remove(child(dbRef, "users/" + user.uid)).catch((error) => {
+                            console.log("Error deleting firebase entry" + error)
+                        });
                         deleteUser(user).then(() => {
                             console.log("User deleted")
                         }).catch((error) => {

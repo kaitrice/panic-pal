@@ -25,14 +25,14 @@ import { colors } from '../values/colors';
 
 const auth = getAuth();
 
-const registerAccount = (email, password) => {
+const registerAccount = (email, password, setCurrentScreen) => {
     createUserWithEmailAndPassword(auth, email, password)
         .then(userCredential => {
             // Signed up
             console.log('registered ' + email);
             const user = userCredential.user.email;
-
-            // ...
+            console.log('registered ' + user);
+            setCurrentScreen('Chat');
         })
         .catch(error => {
             const errorCode = error.code;
@@ -54,7 +54,6 @@ const loginWithAccount = (email, password, setCurrentScreen) => {
             const user = userCredential.user.email;
             console.log('logged in ' + user);
             setCurrentScreen('Chat');
-            // ...
         })
         .catch(error => {
             const errorCode = error.code;
@@ -146,7 +145,7 @@ const Login = ({ setCurrentScreen }) => {
                             </TouchableOpacity>}
                     </View>
 
-                    <TouchableOpacity style={[styles.loginBtnContainer, theme == "light" ? styles.loginBtnContainerLight : styles.loginBtnContainerDark]} onPress={() => { hasAccount ? loginWithAccount(email, password, setCurrentScreen) : registerAccount(email, password); }}>
+                    <TouchableOpacity style={[styles.loginBtnContainer, theme == "light" ? styles.loginBtnContainerLight : styles.loginBtnContainerDark]} onPress={() => { hasAccount ? loginWithAccount(email, password, setCurrentScreen) : registerAccount(email, password, setCurrentScreen); }}>
                         <Text style={[styles.loginBtnText, theme == "light" ? styles.loginBtnTextLight : styles.loginBtnTextDark]}>
                             {hasAccount ? 'Login' : 'Register'}
                         </Text>
