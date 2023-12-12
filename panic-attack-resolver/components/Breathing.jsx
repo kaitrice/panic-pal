@@ -12,8 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../values/colors'
 import { getAuth } from 'firebase/auth';
 
-const secondsPause = 1;
-const startTime = 2;
+const secondsPause = 2;
+const startTime = 3;
 const defaultBreatheInTime = 6;
 const defaultBreatheOutTime = 6;
 
@@ -145,7 +145,7 @@ const Breathing = () => {
         if (isActive) {
             timer = setInterval(() => {
                 setSeconds((seconds) => seconds - 1);
-                if (seconds == 0) {
+                if (seconds == 1) {
                     setState((state + 1 % length + length) % length);
                     setText(states[state][0]);
                     setSeconds(states[state][1])
