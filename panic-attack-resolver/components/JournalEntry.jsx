@@ -62,19 +62,35 @@ const JournalEntry = ({ selectedDate }) => {
   };
 
   const handleDelete = async (entryId) => {
-    try {
-      const storedEntries = await AsyncStorage.getItem("journalEntries");
-      let entries = storedEntries ? JSON.parse(storedEntries) : {};
+    Alert.alert(
+      "Do you want to delete this journal entry?",
+      "You cannot undo this action.",
+      [
+        {
+          text: "Cancel",
+        },
+        {
+          text: "Delete",
+          onPress: async () => {
+            try {
+              const storedEntries = await AsyncStorage.getItem("journalEntries");
+              let entries = storedEntries ? JSON.parse(storedEntries) : {};
 
-      entries[formattedSelectedDate] = entries[formattedSelectedDate].filter(
-        (entry) => entry.id !== entryId
-      );
+              entries[formattedSelectedDate] = entries[formattedSelectedDate].filter(
+                (entry) => entry.id !== entryId
+              );
 
-      await AsyncStorage.setItem("journalEntries", JSON.stringify(entries));
-      setJournalEntries(entries);
-    } catch (error) {
-      console.error("Error deleting journal entry:", error);
-    }
+              await AsyncStorage.setItem("journalEntries", JSON.stringify(entries));
+              setJournalEntries(entries);
+            } catch (error) {
+              console.error("Error deleting journal entry:", error);
+            }
+          },
+          style: 'destructive'
+        },
+      ]
+    );
+
   };
 
   useEffect(() => {
@@ -131,7 +147,7 @@ const JournalEntry = ({ selectedDate }) => {
                 <Ionicons
                   name="trash-outline"
                   size={20}
-                  style={[theme == "light" ? styles.lightTheme : styles.darkTheme, styles.buttonText,]}/>
+                  style={[theme == "light" ? styles.lightTheme : styles.darkTheme, styles.buttonText,]} />
               </TouchableOpacity>
             </View>
           </View>
