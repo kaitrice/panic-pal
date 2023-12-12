@@ -396,7 +396,7 @@ const Chat = () => {
                             style={styles.promptBtn}
                             onPress={() => handlePrompt(index)}
                         >
-                            <Text>{prompt}</Text>
+                            <Text style={styles.promptButtontxt}>{prompt}</Text>
                         </TouchableOpacity>
                     ))}
                 </Animated.View>
@@ -478,10 +478,14 @@ const styles = StyleSheet.create({
         // marginTop: 5,
         // marginBottom: 5,
         margin: 2,
-        paddingLeft: 10,
-        paddingRight: 10,
+        paddingLeft: 7,
+        paddingRight: 7,
         paddingTop: 15,
         paddingBottom: 15,
+    },
+    promptButtontxt: {
+        color: colors.defaultButtonTextColor,
+        fontSize: 13,
     },
 });
 
