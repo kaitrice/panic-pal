@@ -50,9 +50,9 @@ const Breathing = () => {
 
     const states = [
         ["Breathe in", breatheInTime],
-        ["Relax", secondsPause],
+        ["Hold", secondsPause],
         ["Breathe out", breatheOutTime],
-        ["Relax", secondsPause],
+        ["Hold", secondsPause],
     ]
 
     const length = Object.keys(states).length;
