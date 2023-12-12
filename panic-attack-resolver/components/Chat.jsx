@@ -18,8 +18,7 @@ import { colors } from '../values/colors'
 import { getDatabase, getAuth, child, set, get, ref } from '../values/firebaseConfig';
 
 const Chat = () => {
-    // AsyncStorage.removeItem('chatHistory');
-    // AsyncStorage.removeItem('lastMessageTime');
+    //AsyncStorage.getAllKeys().then(AsyncStorage.multiRemove); //use this to clear AsyncStorage COMPLETELY for testing
     const staticPrePrompt = {
         "role": 'system',
         "content": "The assistant is a cognitive behavioral therapist specializing in panic disorder with 20 years of experience. The assistant helps the user get through their panic attacks by reassuring them everything will be okay, helping them talk through catastrophic thoughts, and walking them through exercises that will deescalate the panic attack. The assistant is not allowed to talk about anything unrelated to their job. Keep responses very concise and brief.",
@@ -39,7 +38,6 @@ const Chat = () => {
     const [userInput, setCurrentInput] = useState('');
     const [chatHistory, setMessages] = useState([]);
     const [customPrePrompt, setCustomPrePrompt] = useState(initialCustomPrePrompt);
-    const [lastMessageTime, setLastMessageTime] = useState(Date.now());
     const flatListRef = useRef();
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const [inputAreaHeight, setInputAreaHeight] = useState(0);
@@ -49,11 +47,13 @@ const Chat = () => {
     const [isPrePromptLoading, setIsPrePromptLoading] = useState(true);
 
     const[waitingOnBotResponse, setWaitingOnBotResponse] = useState(false);
+    const auth = getAuth();
+    const uid = getAuth().currentUser.uid;
 
     useEffect(() => {
         async function fetchData() {
             // load chat history from asynch storage
-            let asyncChatHistory = await AsyncStorage.getItem('chatHistory');
+            let asyncChatHistory = await AsyncStorage.getItem('chatHistory' + uid);
             asyncChatHistory = JSON.parse(asyncChatHistory);
             if (asyncChatHistory !== null) {
                 setMessages(asyncChatHistory)
@@ -66,17 +66,12 @@ const Chat = () => {
             }
 
             // load last message time from asynch storage, let bot know if much time has elapsed
-            let asyncLastMessageTime = await AsyncStorage.getItem('lastMessageTime')
+            let asyncLastMessageTime = await AsyncStorage.getItem('lastMessageTime' + uid)
             if (asyncLastMessageTime !== null) {
                 const lastMessageTime = parseInt(asyncLastMessageTime);
                 const currentTime = Date.now();
-                setLastMessageTime(lastMessageTime)
-                //INDIE: TO-DO check my math, i'm trying to go from milliseconds to seconds to hours
                 const hoursElapsed = ((currentTime - lastMessageTime) / 1000) / 3600;
                 console.log("\nLast message sent time:" + hoursElapsed);
-                console.log("\nasyncChatHistory: " + JSON.stringify(asyncChatHistory));
-                console.log(asyncChatHistory.length != 0)
-                console.log(hoursElapsed > 0)
                 if (asyncChatHistory.length != 0 && hoursElapsed > .5) {
                     console.log("\nCHAT HISTORY BEING UPDATED");
                     let lastMessageSystem = asyncChatHistory[asyncChatHistory.length - 1].role === "system";
@@ -99,7 +94,6 @@ const Chat = () => {
 
     useEffect(() => {
         const dbRef = ref(getDatabase());
-        const auth = getAuth();
         get(child(dbRef, "users/" + auth.currentUser.uid + "/preprompt")).then((snapshot) => {
             if (snapshot.exists()) {
                 console.log("\nLOADING IN PREPROMPT FROM FIREBASE: " + snapshot.val());
@@ -144,11 +138,11 @@ const Chat = () => {
     }, [chatHistory]);
 
     useEffect(() => {
-        AsyncStorage.getItem('interventions').then((value) => {
+        AsyncStorage.getItem('interventions' + uid).then((value) => {
             if (value !== null && JSON.parse(value).length > 0) {
                 setInterventionPrompt(JSON.parse(value));
             } else {
-                const defaultPrompts = Object.keys(promptMessage).map(key => promptMessage[key]);
+                const defaultPrompts = Object.keys(promptMessage);
                 setDataAsync(defaultPrompts);
                 setInterventionPrompt(defaultPrompts);
             }
@@ -171,7 +165,7 @@ const Chat = () => {
     };
 
     async function setDataAsync(value) {
-        AsyncStorage.setItem('interventions', JSON.stringify(value))
+        AsyncStorage.setItem('interventions' + uid, JSON.stringify(value))
             .then(() => {
                 setInterventionPrompt(value);
             })
@@ -204,7 +198,7 @@ const Chat = () => {
 
 
         const botMessage = await getBotResponse([staticPrePrompt, customPrePrompt, ...chatHistory, userMessage]); //not sure this works
-        AsyncStorage.setItem('lastMessageTime', Date.now().toString()).catch((e) => {
+        AsyncStorage.setItem('lastMessageTime' + uid, Date.now().toString()).catch((e) => {
             console.error("Error setting message time:", e);
         })
         setWaitingOnBotResponse(false);
@@ -221,7 +215,7 @@ const Chat = () => {
     };
 
     const handlePrompt = (index) => {
-        const promptInput = interventionPrompt[index] || "Please give me intervention techniques for panic attacks.";        
+        const promptInput = promptMessage[interventionPrompt[index]] || "Please give me intervention techniques for panic attacks.";        
         setCurrentInput(promptInput);
         setPrompt(promptInput);
         fadeOut(); // Start the fade-out animation
@@ -288,8 +282,6 @@ const Chat = () => {
     async function generateNewCustomPrePrompt(messages) {
         console.log("\ngenerateNewCustomPrePrompt ___________________________________________");
         //send chatgpt a request asking it to summarize the messages
-        //INDIE: TO-DO. 
-        //if you want the current preprompt to be considered, you can access it using variable customPrePrompt
         const generateLearnedPrompt = {
             "role": 'system',
             "content": "Please summarize what you could learn about being a helpful therapist to this client from these messages. Include any information about them that would help you personalize their service. You will use this to update your pre-prompt for this client.",
@@ -334,18 +326,17 @@ const Chat = () => {
                     "content": newCustomPrePromptText,
                 };
                 setCustomPrePrompt(newCustomPrePrompt);
-                history = history.slice(6); //cut off first 15 messages
+                history = history.slice(6); //cut off first 6 messages
                 console.log("\nnew history: " + JSON.stringify(history));
                 setMessages(history);
                 const dbRef = getDatabase();
-                const auth = getAuth();
-                set(ref(dbRef, "users/" + auth.currentUser.uid), {preprompt: newCustomPrePromptText});
+                set(ref(dbRef, "users/" + auth.currentUser.uid), {preprompt: newCustomPrePromptText.replace(/\n/g, " ").replace(/\s+/g, ' ')});
             }
         }
 
         try {
             console.log("\nset history to" + JSON.stringify(history));
-            await AsyncStorage.setItem('chatHistory', JSON.stringify(history));
+            await AsyncStorage.setItem('chatHistory' + uid, JSON.stringify(history));
         } catch (e) {
             console.log("\nError setting chatHistory")
         }
@@ -479,6 +470,7 @@ const styles = StyleSheet.create({
         maxWidth: '80%',
     },
     promptBtn: {
+        flex: 1,
         borderRadius: 25,
         alignItems: "center",
         justifyContent: "center",

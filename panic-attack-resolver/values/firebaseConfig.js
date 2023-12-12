@@ -21,4 +21,4 @@ initializeAuth(app, {
 });
 
 export {app, getAuth, sendPasswordResetEmail, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser}
-export const { getDatabase, ref, child, get, set, push } = require('@firebase/database');
+export const { getDatabase, ref, child, get, set, push, remove } = require('@firebase/database');

@@ -5,6 +5,7 @@ import { colors } from "../values/colors";
 import moment from "moment";
 import "moment-timezone";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { getAuth } from "firebase/auth";
 
 const JournalEntry = ({ selectedDate }) => {
   const [journalText, setJournalText] = useState("");
@@ -12,6 +13,7 @@ const JournalEntry = ({ selectedDate }) => {
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const formattedSelectedDate = moment(selectedDate).tz(userTimezone).format("YYYY-MM-DD");
   const theme = useColorScheme();
+  const uid = getAuth().currentUser.uid;
 
   const handleChange = (text) => {
     setJournalText(text);
@@ -40,7 +42,7 @@ const JournalEntry = ({ selectedDate }) => {
       };
       const entryDate = moment(new Date(parseInt(newEntry.id))).tz(userTimezone).format("YYYY-MM-DD");
 
-      const storedEntries = await AsyncStorage.getItem("journalEntries");
+      const storedEntries = await AsyncStorage.getItem("journalEntries" + uid);
       let entries = storedEntries ? JSON.parse(storedEntries) : {};
 
       if (!entries[entryDate]) {
@@ -49,7 +51,7 @@ const JournalEntry = ({ selectedDate }) => {
 
       entries[entryDate].push(newEntry);
 
-      await AsyncStorage.setItem("journalEntries", JSON.stringify(entries));
+      await AsyncStorage.setItem("journalEntries" + uid, JSON.stringify(entries));
       setJournalEntries(entries);
 
       setJournalText("");
@@ -73,14 +75,14 @@ const JournalEntry = ({ selectedDate }) => {
           text: "Delete",
           onPress: async () => {
             try {
-              const storedEntries = await AsyncStorage.getItem("journalEntries");
+              const storedEntries = await AsyncStorage.getItem("journalEntries" + uid);
               let entries = storedEntries ? JSON.parse(storedEntries) : {};
 
               entries[formattedSelectedDate] = entries[formattedSelectedDate].filter(
                 (entry) => entry.id !== entryId
               );
 
-              await AsyncStorage.setItem("journalEntries", JSON.stringify(entries));
+              await AsyncStorage.setItem("journalEntries" + uid, JSON.stringify(entries));
               setJournalEntries(entries);
             } catch (error) {
               console.error("Error deleting journal entry:", error);
@@ -96,7 +98,7 @@ const JournalEntry = ({ selectedDate }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const storedEntries = await AsyncStorage.getItem("journalEntries");
+        const storedEntries = await AsyncStorage.getItem("journalEntries" + uid);
         if (storedEntries) {
           setJournalEntries(JSON.parse(storedEntries));
         }
