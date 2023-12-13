@@ -22,7 +22,6 @@ const Header = () => {
             </View>
             <View style={styles.textContainer}>
                 <Text style={[theme == 'light' ? styles.lightThemeTxt : styles.darkThemeTxt, styles.title]}>Panic Pal</Text>
-                <Text style={[theme == 'light' ? styles.lightThemeTxt : styles.darkThemeTxt, styles.subtitle]}>Panic Attack Resolver</Text>
             </View>
         </View>
     </SafeAreaView>
@@ -54,10 +53,10 @@ const styles = StyleSheet.create({
         color: colors.appBackgroundColor,
     },
     slothContainer: {
-        position: 'absolute', // Position the sloth absolutely
+        position: 'absolute',
         top: -2,
-        left: 0, // Align to the left of the screen
-        right: 0, // Ensure it stretches across to the right
+        left: 0,
+        right: 0,
         alignItems: 'left',
     },
     textContainer: {
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
     },
     title: {
         color: colors.defaultButtonColor,
-        fontSize: 36,
+        fontSize: 32,
         fontWeight: 'bold',
         
     },
@@ -82,7 +81,6 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     sloth: {
-        // Additional styles if needed
     },
 });
 
