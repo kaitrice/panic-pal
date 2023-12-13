@@ -9,6 +9,7 @@ const windowWidth = Dimensions.get('window').width;
 const SOS = () => {
   const [contacts, setContacts] = useState([]);
   const theme = useColorScheme();
+  
 
   useEffect(() => {
     (async () => {
@@ -24,8 +25,17 @@ const SOS = () => {
     })();
   }, []);
 
+  // for all numbers to look the same on screen
+  const formattedPhoneNumber = (phoneNumber) => {
+    const cleanedNumber = phoneNumber.replace(/\s/g, "");
+    const formattedNumber = cleanedNumber.replace(/[-()]/g, "");
+
+    return formattedNumber.startsWith('+1') ? formattedNumber : `+1${formattedNumber}`;
+  };
+
   const handleCallContact = (phoneNumber) => {
-    Linking.openURL(`tel:${phoneNumber}`);
+    const cleanedNumber = phoneNumber.replace(/\s/g, "");
+    Linking.openURL(`tel:${cleanedNumber}`);
   };
 
   return (
@@ -34,20 +44,23 @@ const SOS = () => {
 
       <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.label]}>Contacts:</Text>
       {contacts.map((item) => (
-        <View key={item.id} style={styles.contactItem}>
-          
+        <View key={item.id} style={styles.contactItem}>  
+        
           <View style={styles.contactInfo}>
             <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.contactName]}>{item.name}</Text>
             <Text style={[theme == 'light' ? styles.lightTheme : styles.darkTheme, styles.contactNumber]}>
-              {item.phoneNumbers ? item.phoneNumbers[0].number : 'No phone number'}
+              {item.phoneNumbers ? formattedPhoneNumber(item.phoneNumbers[0].number) : 'No phone number'}
             </Text>
           </View>
           
           <TouchableOpacity
-            onPress={() => handleCallContact(item.phoneNumbers[0].number)}
-            style={styles.callButton}
+          
+            onPress={() => handleCallContact(item.phoneNumbers[0].number )}
+            style={!item.phoneNumbers || item.phoneNumbers.length === 0 ? styles.disabledCallButton : styles.callButtonStyle}
+            disabled={!item.phoneNumbers || item.phoneNumbers.length === 0}
           >
             <Text style={styles.callButtonText}>Call</Text>
+            
           </TouchableOpacity>
         </View>
       ))}
@@ -85,7 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
-  callButton: {
+  callButtonStyle: {
     backgroundColor: colors.sosButtonColor,
     padding: 8,
     borderRadius: 4,
@@ -93,6 +106,11 @@ const styles = StyleSheet.create({
   callButtonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  disabledCallButton: {
+    backgroundColor: '#ccc', // Set the background color to a visually muted color
+    padding: 8,
+    borderRadius: 4,
   },
   lightTheme: {
     // backgroundColor: colors.appBackgroundColor,
